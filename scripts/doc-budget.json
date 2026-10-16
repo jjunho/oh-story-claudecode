@@ -72,8 +72,8 @@
     },
     {
       "path": "skills/story-long-write/references/banned-words.md",
-      "budget": 1800,
-      "why": "共享信号索引；移除独立硬禁、词频阈值和重复修法，按语境及文风判定。"
+      "budget": 4600,
+      "why": "共享信号索引；按语境与文风判定。作者要求保留长期积累的完整词项、句式分支和复合原例，恢复旧词表及完整指南中的识别语料；方法仍由三层文件维护，不恢复硬禁、密度配额或机械替换。"
     },
     {
       "path": "skills/story-long-write/references/long-format.md",
@@ -835,19 +835,19 @@
         "skills/story-setup/references/agent-references/deslop-gates.md",
         "skills/story-setup/references/agent-references/banned-words.md"
       ],
-      "why": "三层诊断与定点修复共用写手调用；保守完整计入三份方法、范围协议与词表，不按 Gate 截取；短篇格式另登记条件读取。",
+      "why": "三层诊断与定点修复共用写手调用；保守完整计入三份方法、范围协议与词表，不按 Gate 截取；短篇格式另登记条件读取。 作者要求保留旧词库及句式原例，完整计入恢复后的信号索引；相应提高路径预算，35K硬上限不变。",
       "branches": [
         {
           "label": "长篇或独立改写",
           "files": [],
-          "budget": 19000
+          "budget": 21800
         },
         {
           "label": "短篇",
           "files": [
             "skills/story-setup/references/agent-references/format-and-structure.md"
           ],
-          "budget": 23000
+          "budget": 25800
         }
       ]
     },
@@ -1572,14 +1572,14 @@
         {
           "label": "通用 rubric",
           "files": [],
-          "budget": 25000
+          "budget": 27800
         },
         {
           "label": "平台 rubric",
           "files": [
             "skills/story-review/references/rubrics/zhihu.md"
           ],
-          "budget": 25600
+          "budget": 28400
         },
         {
           "label": "分批审查（平台 rubric）",
@@ -1587,10 +1587,10 @@
             "skills/story-review/references/rubrics/zhihu.md",
             "skills/story-review/references/batch-review.md"
           ],
-          "budget": 26600
+          "budget": 29400
         }
       ],
-      "why": "完整审稿无论表层轻重均整读表达、用笔、故事三份方法；仅报告，不执行改写。所有方法全额计入，平台 rubric 与分批规则仍按原条件加载。"
+      "why": "完整审稿无论表层轻重均整读表达、用笔、故事三份方法；仅报告，不执行改写。所有方法全额计入，平台 rubric 与分批规则仍按原条件加载。 作者要求保留旧词库及句式原例，完整计入恢复后的信号索引；相应提高路径预算，35K硬上限不变。"
     },
     {
       "label": "去AI味主会话",
@@ -1609,15 +1609,15 @@
           "files": [
             "skills/story-deslop/references/agent-calls.md"
           ],
-          "budget": 17800
+          "budget": 20600
         },
         {
           "label": "只检测或主会话自己改",
           "files": [],
-          "budget": 17500
+          "budget": 20300
         }
       ],
-      "why": "独立去味主会话先完整诊断，再决定是否委派；所有分支均完整计三份方法、范围协议和词表，不用检测器扫描代替诊断。写手的后续执行另计自己的完整方法路径。"
+      "why": "独立去味主会话先完整诊断，再决定是否委派；所有分支均完整计三份方法、范围协议和词表，不用检测器扫描代替诊断。写手的后续执行另计自己的完整方法路径。 作者要求保留旧词库及句式原例，完整计入恢复后的信号索引；相应提高路径预算，35K硬上限不变。"
     },
     {
       "label": "部署写作环境（story-setup）",
