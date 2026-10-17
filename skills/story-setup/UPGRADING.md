@@ -2,9 +2,9 @@
 
 ## 当前版本
 
-助手版本 36（v0.8.6 之后的这次更新）。已有项目更新技能包后，在项目根重跑 `/story-setup`（Codex 用 `$story-setup`，Antigravity 用 `/skills` 或直接点名），再新开会话。
+助手版本 36（v0.9.0）。已有项目更新技能包后，在项目根重跑 `/story-setup`（Codex 用 `$story-setup`，Antigravity 用 `/skills` 或直接点名），再新开会话。
 
-- `setup_skill_version: 1.3.3`
+- `setup_skill_version: 1.3.4`
 - `agents_version: 36`
 
 `.story-deployed` 缺字段，或 `agents_version` 缺失、不是整数、小于 36，都算待更新，重跑 story-setup 即可。项目里的 `agents_version` 大于 36，说明本机技能包比项目旧：先更新 oh-story-claudecode，不要用旧包覆盖。各版本改了什么见仓库根目录 `CHANGELOG.md`。
@@ -17,7 +17,7 @@
 4. 在写的长篇：确认每本书有 `追踪/_tracking-state.json`。没有就按下方「追踪模型迁移」重建，否则写下一章会被拦。
 5. 拆文成果或细纲不满足当前格式时，按检查提示定点补齐，不因单项缺口整本重拆。
 
-## 本次更新必须重跑 story-setup（助手版本 36）
+## 本次更新必须重跑 story-setup（v0.9.0，助手版本 36）
 
 - 写手、架构师、角色设计、一致性检查、查资料、资料研究几个助手模板改了。参考资料包里的排纲、开篇、人物、题材和情绪方法按写书的时刻重新整理，删掉了重复和过时的几份；写手读的技法与去 AI 味方法对齐。不重跑的话，项目里的旧助手会去找已经删掉的资料。
 - 项目指令（`CLAUDE.md`、`AGENTS.md`）改成每个编程工具一个管理块，从 `<!-- oh-story:{工具} 开始` 到 `<!-- oh-story:{工具} 结束 -->`。第一次重跑会把旧版 oh-story 写进去的段落换成管理块，你自己写的段落留在块外；以后重跑只替换块里的内容。几个工具共用 `AGENTS.md` 时各占一块，互不覆盖。
