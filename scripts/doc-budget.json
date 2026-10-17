@@ -1930,10 +1930,7 @@
       "label": "长篇扫榜",
       "files": [
         "skills/story-long-scan/SKILL.md",
-        "skills/story-long-scan/references/genre-trends.md",
-        "skills/story-long-scan/references/reader-profiling.md",
-        "skills/story-long-scan/references/topic-decision.md",
-        "skills/story-long-scan/references/publishing-guide.md"
+        "skills/story-long-scan/references/topic-decision.md"
       ],
       "branches": [
         {
@@ -1941,31 +1938,45 @@
           "files": [
             "skills/story-long-scan/references/platform-qidian.md"
           ],
-          "budget": 13950
+          "budget": 7250
         },
         {
           "label": "番茄",
           "files": [
             "skills/story-long-scan/references/platform-fanqie.md"
           ],
-          "budget": 14450
+          "budget": 7100
         },
         {
           "label": "晋江",
           "files": [
             "skills/story-long-scan/references/platform-jjwxc.md"
           ],
-          "budget": 13200
+          "budget": 6600
         },
         {
           "label": "七猫",
           "files": [
             "skills/story-long-scan/references/platform-qimao.md"
           ],
-          "budget": 13450
+          "budget": 6900
+        },
+        {
+          "label": "刺猬猫",
+          "files": [
+            "skills/story-long-scan/references/platform-ciweimao.md"
+          ],
+          "budget": 6600
+        },
+        {
+          "label": "内置知识",
+          "files": [
+            "skills/story-long-scan/references/genre-trends.md"
+          ],
+          "budget": 7150
         }
       ],
-      "why": "v0.8.2：先聚合再读，结论落盘交给选题与写作；按平台只读一份平台说明（上界：全部通用参考一起读）。 番茄参考加书库「最热」一节（+500）：阅读榜被老书占住时，连载中 30 万字以下的热度才看得出新书里什么题材在冒头。 起点、七猫参考各加书库新书一节（2026-10-09）：新书榜有下榜门槛，三日内更新、30 万字以下按人气/点击排的书库页才看得到还在冒头的新书；入口把六行「用法见某参考」的脚本说明合成一行腾出约 440 字，起点分支不调预算，番茄、晋江锁住腾出的余量，七猫补登记。"
+      "why": "v0.8.2：先聚合再读，结论落盘交给选题与写作；按平台只读一份平台说明（上界：全部通用参考一起读）。 番茄参考加书库「最热」一节（+500）：阅读榜被老书占住时，连载中 30 万字以下的热度才看得出新书里什么题材在冒头。 起点、七猫参考各加书库新书一节（2026-10-09）：新书榜有下榜门槛，三日内更新、30 万字以下按人气/点击排的书库页才看得到还在冒头的新书；入口把六行「用法见某参考」的脚本说明合成一行腾出约 440 字，起点分支不调预算，番茄、晋江锁住腾出的余量，七猫补登记。 2026-10-17 按时刻重组：读者画像、平台运营两份没有任何 Phase 读取的资料删除，平台读者与调性并入各平台参考，选题要用的平台适配和读者维度并入 topic-decision；genre-trends 只在内置知识模式读，改登记为互斥分支；补登记刺猬猫分支（以前漏登记，刺猬猫走榜单采集，和其他平台互斥）。各分支实测 6340–6997，原来约 13.5K。"
     },
     {
       "label": "短篇扫榜",
@@ -1981,17 +1992,17 @@
           "files": [
             "skills/story-short-scan/references/platform-dianzhong.md"
           ],
-          "budget": 8000
+          "budget": 7600
         },
         {
           "label": "黑岩",
           "files": [
             "skills/story-short-scan/references/platform-heiyan.md"
           ],
-          "budget": 8100
+          "budget": 7750
         }
       ],
-      "why": "v0.8.2：同上，短篇。"
+      "why": "v0.8.2：同上，短篇。 2026-10-17 按时刻重组：real-market-data 删去写作排版行和空字数列（-561），topic-match 加平台对照表、写作端六种情绪与失败风险栏，manual-rank-input 写明缺作者用「佚名」占位，黑岩参考写明近期上架分布与默认带详情（+167）；两分支锁住余量（实测点众 7549、黑岩 7716）。"
     },
     {
       "label": "导入·确认来源与范围",

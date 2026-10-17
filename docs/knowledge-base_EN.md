@@ -22,8 +22,8 @@ Each skill includes a `references/` knowledge base loaded on demand to keep cont
 | Female-oriented Writing | Female reader preferences · Emotional description · Romance patterns · Benchmark analysis | short-write |
 | Deconstruction Methods | Golden First 3 Chapters · Emotion curves · Structure breakdown · Submission layer (lead-in · paywall break · title and blurb) | long-analyze / short-analyze |
 | Short-form Methodology | Story core · Plot nodes · Explosive point analysis · Writing techniques · Rhythm analysis · Resonance analysis · Character classification · Character contrast · Motivation chain · Character relationships · Romance stages · Platform fit | short-analyze |
-| Reader Profiles | 9-dimension profiles · Target reader analysis | long-scan |
-| Market Data | Genre trends · Platform characteristics · Collection formats · Submission guides | long-scan / short-scan |
+| Reader Profiles | Platform readers · Reader dimensions for topic choice | long-scan |
+| Market Data | Genre trends · Platform characteristics · Collection formats | long-scan / short-scan |
 | Cover Styles | 10 genre visual styles · Color composition · Prompt templates | story-cover |
 | Adversarial Review | Multi-perspective review · Scoring rubrics · Toxic trope detection | story-review |
 

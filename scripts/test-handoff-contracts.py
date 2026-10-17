@@ -13,7 +13,10 @@
 - 短篇拆文：情节节点模板要有写作端点名的节点字段；genre_detected 的每个取值在写作端题材映射表里；
   导入短篇读的拆文报告小节存在；写作端和导入读的 `_meta.json` 键在 output-contract 的 schema 里。
 - 短篇扫榜：选题匹配推荐的目标平台要被写作端的设计模板和 check-phase2-contract.js 接受，
-  扫榜支持的每个平台都在对照表里。
+  扫榜支持的每个平台都在对照表里；写作端 Phase 1 读结论文件点名的小节和「复扫日期」在模板里，
+  扫榜情绪对照表与选题匹配的目标情绪只用写作端情绪表的六种，难度与写作端一致。
+- 长篇扫榜：拆文回填和写作开书点名的选题决策小节、字段在模板里；「待拆文验证」和「能爆的原因」同一行；
+  文件落在拆文端会去找的 `扫榜/{YYYYMMDD}/`。
 
 最后用几组改坏的输入确认断言真的会报错。
 """
@@ -516,7 +519,143 @@ def check_short_platforms(repo: Repo) -> list[str]:
     return failures
 
 
-CHECKS = (check_long_report, check_em_cards, check_rhythm, check_short_analyze, check_short_platforms)
+# ---------- 短篇扫榜结论 → 写作端 Phase 1 ----------
+
+SHORT_WRITE_SKILL = "skills/story-short-write/SKILL.md"
+
+
+def short_write_emotions(repo: Repo) -> dict[str, str]:
+    """写作端 Phase 1 情绪表：情绪 → 难度。"""
+    for header, rows in tables(repo.text(SHORT_WRITE_SKILL)):
+        if header and header[0] == "情绪类型" and "难度" in header:
+            col = header.index("难度")
+            return {row[0]: row[col] for row in rows if len(row) > col}
+    return {}
+
+
+def check_short_scan_handoff(repo: Repo) -> list[str]:
+    failures: list[str] = []
+    topic = repo.text(TOPIC_MATCH)
+    template = fenced_block_after(topic, r"^## 短篇扫榜结论\.md 模板")
+    if not template:
+        return [f"{TOPIC_MATCH}: 没找到「短篇扫榜结论.md 模板」的代码块，确认写法后更新本测试"]
+
+    # 写作端按文件名找结论，读点名的小节和「复扫日期」。
+    write = repo.text(SHORT_WRITE_SKILL)
+    read_line = re.search(r"^.*`短篇扫榜结论\.md`.*$", write, re.M)
+    if not read_line:
+        failures.append(f"{SHORT_WRITE_SKILL}: 没找到读取 `短篇扫榜结论.md` 的写法，确认读取写法后更新本测试")
+    else:
+        where = f"{SHORT_WRITE_SKILL}:{line_no(write, read_line.start())}"
+        for name in QUOTED_RE.findall(read_line.group(0)):
+            if not re.search(rf"^##\s+{re.escape(name)}\s*$", template, re.M):
+                failures.append(f"{where}: 读结论文件的「{name}」，topic-match 模板里没有这一节")
+        if "复扫日期" in read_line.group(0) and not re.search(r"^- 复扫日期：", template, re.M):
+            failures.append(f"{where}: 读结论文件的「复扫日期」，topic-match 模板文件头里没有这个字段")
+    if "`短篇扫榜结论.md`" not in repo.text(SHORT_SCAN_SKILL):
+        failures.append(f"{SHORT_SCAN_SKILL}: 没写结论落到 `短篇扫榜结论.md`，写作端按这个文件名找")
+
+    # 选题时读 `征稿要求.md`：存这份文件的写法要在 SKILL 里。平台参考只读所选的那份，
+    # 写在某个平台参考里，选了别的平台的作者发来的征稿要求就不会落盘。
+    skill = repo.text(SHORT_SCAN_SKILL)
+    if "`征稿要求.md`" in skill and not re.search(r"^.*存进.*`征稿要求\.md`.*$", skill, re.M):
+        failures.append(f"{SHORT_SCAN_SKILL}: 选题时读 `征稿要求.md`，SKILL 里没写把征稿要求存进这个文件")
+
+    # 目标情绪与难度以写作端 Phase 1 情绪表为准。
+    emotions = short_write_emotions(repo)
+    if not emotions:
+        return failures + [f"{SHORT_WRITE_SKILL}: 没解析出 Phase 1 情绪表（表头「情绪类型 … 难度」），确认写法后更新本测试"]
+    scan_table = None
+    for header, rows in tables(repo.text(SHORT_SCAN_SKILL)):
+        if header and header[0] == "情绪" and "难度" in header:
+            scan_table = (rows, header.index("难度"))
+            break
+    if scan_table is None:
+        failures.append(f"{SHORT_SCAN_SKILL}: 缺少情绪对照表（表头「情绪 … 难度」）")
+    else:
+        rows, col = scan_table
+        seen = set()
+        for row in rows:
+            name = row[0]
+            seen.add(name)
+            if name not in emotions:
+                failures.append(f"{SHORT_SCAN_SKILL}: 情绪对照表的「{name}」不在写作端情绪表里（{' / '.join(emotions)}）")
+            elif len(row) > col and row[col] != emotions[name]:
+                failures.append(f"{SHORT_SCAN_SKILL}: 「{name}」难度写成「{row[col]}」，写作端是「{emotions[name]}」")
+        for name in emotions:
+            if name not in seen:
+                failures.append(f"{SHORT_SCAN_SKILL}: 情绪对照表缺写作端的「{name}」")
+    match = re.search(r"^- 目标情绪：\{([^}]+)\}", template, re.M)
+    if not match:
+        failures.append(f"{TOPIC_MATCH}: 模板缺「- 目标情绪：{{…}}」，写作端拿它当候选情绪")
+    else:
+        for choice in split_terms(re.sub(r"[，,].*$", "", match.group(1)), "/"):
+            if choice not in emotions:
+                failures.append(f"{TOPIC_MATCH}: 目标情绪可选「{choice}」，写作端情绪表里没有")
+    return failures
+
+
+
+# ---------- 长篇扫榜选题决策 → 拆文回填、写作开书 ----------
+
+LONG_SCAN_SKILL = "skills/story-long-scan/SKILL.md"
+TOPIC_DECISION = "skills/story-long-scan/references/topic-decision.md"
+LONG_ANALYZE_SKILL = f"{LONG_ANALYZE}/SKILL.md"
+LONG_WRITE_SETUP = "skills/story-long-write/references/workflow-setup.md"
+
+# 读取方点名的选题决策小节或字段：(读取方, 原文里的写法, 模板里的名字)。
+# 写法找不到说明读取方改了读法，提醒更新本表；名字找不到说明模板改名，下游会静默断开。
+TOPIC_READS = (
+    (LONG_WRITE_SETUP, "「推荐选题」", "推荐选题"),
+    (LONG_WRITE_SETUP, "`扫榜日期`", "扫榜日期"),
+    (LONG_WRITE_SETUP, "能爆的原因 Y", "能爆的原因"),
+    (LONG_WRITE_SETUP, "差异化 Z", "差异化定位"),
+    (STAGE5, "「推荐选题」", "推荐选题"),
+    (STAGE5, "「能爆的原因」", "能爆的原因"),
+    (STAGE5, "「题材组合」", "题材组合"),
+    (LONG_ANALYZE_SKILL, "「推荐选题」", "推荐选题"),
+)
+
+
+def check_long_scan_handoff(repo: Repo) -> list[str]:
+    failures: list[str] = []
+    topic = repo.text(TOPIC_DECISION)
+    template = fenced_block_after(topic, r"^## 选题决策\.md 模板")
+    if not template:
+        return [f"{TOPIC_DECISION}: 没找到「选题决策.md 模板」的代码块，确认写法后更新本测试"]
+    names = {re.sub(r"[：:].*$", "", h).strip() for h in headings(template)}
+    names |= set(re.findall(r"^- ([^：\n]+)：", template, re.M))
+
+    for rel, said, name in TOPIC_READS:
+        if said not in repo.text(rel):
+            failures.append(f"{rel}: 没找到读选题决策「{name}」的写法 {said}，确认读取写法后更新本测试")
+        if name not in names:
+            failures.append(f"{TOPIC_DECISION}: {rel} 读选题决策的「{name}」，模板里没有这一节或这个字段")
+
+    # 拆文端只改「能爆的原因」那一行回填，标记必须和它在同一行。
+    line = re.search(r"^- 能爆的原因：.*$", template, re.M)
+    if not line or "`待拆文验证`" not in line.group(0):
+        failures.append(f"{TOPIC_DECISION}: 模板「能爆的原因」那一行要带 `待拆文验证`，拆文端按这一行回填")
+    for rel in (STAGE5, LONG_ANALYZE_SKILL):
+        if "待拆文验证" not in repo.text(rel):
+            failures.append(f"{rel}: 没找到按「待拆文验证」回填的写法，确认读取写法后更新本测试")
+
+    # 拆文端去 `扫榜/*/选题决策.md` 找，扫榜端要把文件落在 `扫榜/{YYYYMMDD}/`。
+    if "扫榜/*/选题决策.md" not in repo.text(STAGE5):
+        failures.append(f"{STAGE5}: 没找到去 `扫榜/*/选题决策.md` 找文件的写法，确认读取写法后更新本测试")
+    elif "扫榜/{YYYYMMDD}/" not in section_body(topic, "交付"):
+        failures.append(f"{TOPIC_DECISION}: 拆文端去 `扫榜/*/选题决策.md` 找文件，交付一节没写落在 `扫榜/{{YYYYMMDD}}/`")
+
+    # 写作端取「排在最前（可行性最高）」的推荐选题，模板要写明按可行性排序。
+    if "可行性最高" in repo.text(LONG_WRITE_SETUP) and "按可行性排序" not in topic:
+        failures.append(f"{TOPIC_DECISION}: 写作端取排在最前的选题当可行性最高，模板没写按可行性排序")
+    return failures
+
+
+CHECKS = (
+    check_long_report, check_em_cards, check_rhythm, check_short_analyze, check_short_platforms,
+    check_short_scan_handoff, check_long_scan_handoff,
+)
 
 
 def run_all(repo: Repo) -> list[str]:
@@ -552,6 +691,18 @@ NEGATIVE_CASES = (
     ("rhythm_reference 点名不存在的列", LONG_RECALL, "扩写方式 →", "扩写技法 →", "扩写技法"),
     ("情绪模块模板丢掉门禁字段", STAGE3, "| 情绪链 | {缺口", "| 情绪曲线 | {缺口", "情绪链"),
     ("写作端校验不再认黑岩", PHASE2_CHECK, "|黑岩|", "|", "黑岩"),
+    ("扫榜结论改了「选题匹配」标题", TOPIC_MATCH, "## 选题匹配", "## 选题方向", "选题匹配"),
+    ("扫榜结论文件头丢了复扫日期", TOPIC_MATCH, "- 复扫日期：{YYYYMMDD}\n", "", "复扫日期"),
+    ("征稿要求只在平台参考里落盘", SHORT_SCAN_SKILL,
+     "5. 作者发来征稿要求：原文存进输出目录的 `征稿要求.md`，题材、字数、截止日期当硬条件。\n", "", "征稿要求.md"),
+    ("选题匹配目标情绪写成题材名", TOPIC_MATCH, "{意难平 / 反转震撼", "{虐恋 / 反转震撼", "虐恋"),
+    ("扫榜情绪表难度和写作端相反", SHORT_SCAN_SKILL, "| 反转震撼 | 悬疑、身份错位、反转 | 高 |",
+     "| 反转震撼 | 悬疑、身份错位、反转 | 低 |", "反转震撼"),
+    ("选题决策模板丢了题材组合", TOPIC_DECISION, "- 题材组合：", "- 题材：", "题材组合"),
+    ("待拆文验证挪出能爆的原因那一行", TOPIC_DECISION,
+     "（假设，`待拆文验证`）\n", "\n- 拆文状态：`待拆文验证`\n", "待拆文验证"),
+    ("选题决策不再落在扫榜日期目录", TOPIC_DECISION,
+     "`扫榜/{YYYYMMDD}/`", "`选题/{YYYYMMDD}/`", "扫榜/*/选题决策.md"),
 )
 
 
