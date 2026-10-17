@@ -141,11 +141,6 @@
       ]
     },
     {
-      "name": "short-market-data",
-      "source": "skills/story-short-analyze/references/real-market-data.md",
-      "targets": ["skills/story-short-scan/references/real-market-data.md"]
-    },
-    {
       "name": "long-reversal",
       "source": "skills/story-long-write/references/long-reversal.md",
       "targets": ["skills/story-setup/references/agent-references/long-reversal.md"]
@@ -223,29 +218,26 @@
   ],
   "derived_groups": [
     {
-      "name": "analysis-character-relations",
-      "reason": "Shared relationship taxonomy has distinct analysis, review and writing consumers.",
+      "name": "character-relations-consumers",
+      "reason": "Shared relationship taxonomy has distinct review and writing consumers.",
       "members": [
-        "skills/story-short-analyze/references/analysis-character-relations.md",
         "skills/story-long-write/references/character-relations.md",
         "skills/story-review/references/character-relations.md",
         "skills/story-setup/references/agent-references/character-relations.md"
       ]
     },
     {
-      "name": "analysis-character-basics",
-      "reason": "Analysis rubric retains the character taxonomy while its consumer contract diverges from writing.",
+      "name": "character-basics-deployment",
+      "reason": "Setup deploys the writing character taxonomy as an agent reference with consumer-specific edits.",
       "members": [
-        "skills/story-short-analyze/references/analysis-character-basics.md",
         "skills/story-long-write/references/character-basics.md",
         "skills/story-setup/references/agent-references/character-basics.md"
       ]
     },
     {
-      "name": "analysis-reader-profile",
-      "reason": "Reader taxonomy is reused but analysis requires evidence and uncertainty reporting.",
+      "name": "genre-readers-deployment",
+      "reason": "Setup deploys the writing reader taxonomy as an agent reference with consumer-specific edits.",
       "members": [
-        "skills/story-short-analyze/references/analysis-reader-profile.md",
         "skills/story-long-write/references/genre-readers.md",
         "skills/story-setup/references/agent-references/genre-readers.md"
       ]

@@ -18,11 +18,10 @@
 | 细纲方法 | 目标情绪与主角选择 · 爽点六类与倒推 · 高潮构建公式 · 回炉诊断 | long-write |
 | 去AI味 | 预防 · 改写顺序 · 改写范例库 · 禁用词表 | deslop / long-write / short-write |
 | 质量检查 | 通用 · 长篇专项 · 短篇专项 · 毒点排查 | long-write / short-write / short-analyze |
-| 写作公式 | 21 大题材写作公式 · 三翻四震 · 感情线四阶段 | short-write / short-analyze |
+| 写作公式 | 21 大题材写作公式 · 三翻四震 · 感情线四阶段 | short-write |
 | 女频写作 | 女读者偏好 · 情感描写 · 感情线模式 · 对标拆书 | short-write |
-| 拆文方法 | 黄金三章 · 情绪曲线 · 结构拆解 · 知乎风格分析 | long-analyze / short-analyze |
-| 短篇方法论 | 故事核 · 情节节点 · 爆点分析 · 写作手法 · 节奏分析 · 共鸣分析 · 人物分类 · 平台适配 | short-analyze |
-| 拆文实例 | 完整案例拆解 · 模板化输出 | short-analyze |
+| 拆文方法 | 黄金三章 · 情绪曲线 · 结构拆解 · 投稿层（导语 · 付费断点 · 书名简介） | long-analyze / short-analyze |
+| 短篇方法论 | 故事核 · 情节节点 · 爆点分析 · 写作手法 · 节奏分析 · 共鸣分析 · 人物分类 · 人物反差 · 动机链 · 人物关系 · 感情线阶段 · 平台适配 | short-analyze |
 | 读者画像 | 9 维画像 · 目标读者分析 | long-scan |
 | 市场数据 | 题材趋势 · 平台特性 · 采集格式 · 投稿指南 | long-scan / short-scan |
 | 封面风格 | 10 大题材视觉风格 · 色彩构图 · 提示词模板 | story-cover |

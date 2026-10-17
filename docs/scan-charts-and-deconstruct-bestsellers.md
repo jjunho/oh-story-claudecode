@@ -69,6 +69,6 @@ Stage 6 可以单独重建：优先用 `_style-sample.txt`；没有样本时，�
 ## 相关
 
 - 触发：`/story-long-scan`、`/长篇扫榜`、"长篇什么火"；`/story-long-analyze`、`/长篇拆文`、"帮我拆这本书"。
-- 参考方法：`skills/story-long-analyze/references/stage3-plot-rhythm.md`（剧情与节奏聚合）、`deconstruction-notes.md`
+- 参考方法：`skills/story-long-analyze/references/stage3-plot-rhythm.md`（剧情与节奏聚合，含桥段词表）
 - 站点指南：[小说拆书怎么拆](https://zenstory.ai/zh/oh-story/learn-from-fiction)（从原文证据到自己的新场景）、[黄金三章怎么写](https://zenstory.ai/zh/oh-story/novel-opening)（开篇交付清单与自查表）
 - 仓库地址：https://github.com/zenstory-ai/oh-story-claudecode（原 `worldwonderer/oh-story-claudecode`，旧链接自动跳转）

@@ -31,5 +31,5 @@
 `拆文库/{书名}/` 下固定有 `原文/`、`拆文报告.md`、`情节节点.md`、`写作手法.md`、`_meta.json`。
 
 - `_meta.json` 可选，缺了不挡写作。`structure_counts.reversal_type` 是反转类型（视角/身份/动机/时间线/信息/认知/无反转），按它在 `short-reversal.md` 选反转骨架；其余计数（结构段 `beats`、钩子 `hooks`、反转铺垫线索 `setup_clues`、有反差的人物 `character_archetypes`、可复用手法 `reusable_structures`）只作对照，不当指标
-- `情节节点.md` 看每个节点的字数位置、功能和触发事件，给新故事排节奏
+- `情节节点.md` 看每个节点的位置、功能和事件，给新故事排节奏
 - `写作手法.md` 与 `原文/` 只学写法（对话调子、节奏、画面感），不抄具体情节
