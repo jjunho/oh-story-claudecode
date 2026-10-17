@@ -12,7 +12,7 @@
 | 出细纲 | `references/workflow-outline.md` | `references/plot-core-methods.md`（细纲与章级）、`references/long-chapter-hooks.md`（章首章尾钩子）；前 3 章加 `references/opening-design.md`「开篇规划」 |
 | 写一章、日更 | `references/workflow-chapter.md`、`references/workflow-daily.md` | `references/writing-craft.md`、`references/long-format.md`、本章技法一份；第 1-3 章读 `references/opening-design.md`「开篇落笔」；题材卡 `references/genre-prose-cards.md` |
 | 回炉 | `references/workflow-revision.md` | 作者只说症状时读 `references/revision-diagnosis.md` |
-| 成稿检查 | `references/long-chapter-quality.md` | `references/deslop-gates.md`、`references/banned-words.md`、`scripts/check-ai-patterns.js` |
+| 成稿检查 | `references/long-chapter-quality.md` | `references/banned-words.md`、`scripts/check-ai-patterns.js` |
 
 ## 按症状
 
@@ -28,4 +28,4 @@
 | 金手指失控、战力崩 | `references/long-genre-mechanics.md` |
 | 情绪写空、套式反应 | `references/emotion-on-page.md` |
 | 对话平、人物一个腔调 | `references/dialogue-mastery.md` |
-| AI 味 | `references/deslop-gates.md` |
+| AI 味 | 按检测器提示改；要完整三层去味走 `/story-deslop` |

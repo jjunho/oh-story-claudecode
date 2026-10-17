@@ -17,15 +17,29 @@
   扫榜情绪对照表与选题匹配的目标情绪只用写作端情绪表的六种，难度与写作端一致。
 - 长篇扫榜：拆文回填和写作开书点名的选题决策小节、字段在模板里；「待拆文验证」和「能爆的原因」同一行；
   文件落在拆文端会去找的 `扫榜/{YYYYMMDD}/`。
+- 派助手：路由派 story-explorer / story-researcher 的 prompt 字段和查询类型在助手模板里；
+  审稿给短篇写「无追踪」时 consistency-checker 有短篇分支。
+- 导入短篇 → 短篇写作构思检查：导入的 `设定.md` 模板有写作端模板的全部小节和基本信息、设计校验字段；
+  照导入模板填好的设定和小节大纲跑 check-phase2-contract.js，只剩导入约定留给构思时定的两项。
+- 导入长篇 → 长篇写作：导入卷纲模板原样落盘过写作端 outline_view.py 的严格检查，按单元取得到卡，
+  卡里有写正文组装脚本要读的单元字段；细纲检查脚本回报的模板出处在各副本所在 skill 里真实存在。
+- 写作端「目标平台」→ 审稿平台表：长篇题材定位、短篇设定模板、导入 Phase 1 能写的每个平台，
+  都按篇幅出现在审稿的平台映射表里，映射到的平台表文件存在；审稿派 consistency-checker 时给出模板要的字段。
+- 去味 → 写手：检测器的每个类别都在 expression 的提示索引里、blocking 加粗与检测器一致；
+  各调用方派写手去味时的任务标签写手认得，点名的 deslop-gates 小节存在。
 
 最后用几组改坏的输入确认断言真的会报错。
 """
 
 from __future__ import annotations
 
+import json
 import re
 import runpy
+import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -50,6 +64,7 @@ SHORT_CONTRACT = "skills/story-short-analyze/references/output-contract.md"
 IMPORT_DEEP = "skills/story-import/references/deep-analysis.md"
 SHORT_RECALL = "skills/story-short-write/references/benchmark-recall.md"
 SHORT_DESIGN = "skills/story-short-write/references/workflow-design.md"
+SHORT_DRAFT = "skills/story-short-write/references/workflow-draft.md"
 PHASE2_CHECK = "skills/story-short-write/scripts/check-phase2-contract.js"
 SHORT_SCAN_SKILL = "skills/story-short-scan/SKILL.md"
 TOPIC_MATCH = "skills/story-short-scan/references/topic-match.md"
@@ -652,9 +667,332 @@ def check_long_scan_handoff(repo: Repo) -> list[str]:
     return failures
 
 
+# ---------- 导入短篇 → 短篇写作构思检查 ----------
+
+# 导入把题材包的选择留给续写构思：这两项必然没过，其余检查必须过。
+IMPORT_SHORT_LEFT_FOR_DESIGN = {"phase2.genre-reference-declared", "phase2.genre-moves-declared"}
+IMPORT_FIXTURE_VALUES = {
+    "- 目标字数：": "- 目标字数：6000 字",
+    "- 目标平台：": "- 目标平台：知乎盐言",
+    "- 反转类型：": "- 反转类型：身份反转",
+    "- 反转位置：": "- 反转位置：第 3 节 ÷ 共 4 节 = 75%",
+    "- 付费点：": "- 付费点：第 2 节末",
+    "- 反派设计：": "- 反派设计：不适用（家庭矛盾，没有单一反派）",
+}
+
+
+def import_short_fixture(template: str, outline_header: str) -> tuple[str, str]:
+    """把导入的设定模板填成一份完本短篇（4 节、付费点在第 2 节末），再配一份小节大纲。"""
+    lines = []
+    for line in template.splitlines():
+        prefix = next((key for key in IMPORT_FIXTURE_VALUES if line.startswith(key)), None)
+        lines.append(IMPORT_FIXTURE_VALUES[prefix] if prefix else re.sub(r"\{[^}]*\}", "原文证据", line))
+    cells = len(split_terms(outline_header, "|"))
+    rows = []
+    for section in range(1, 5):
+        row = ["开头", "主事件", "她发现账单{发现}", "平静→怀疑"] + ["原文证据"] * (cells - 5) + ["1500"]
+        row[7] = "付费点" if section == 2 else "下一节接上"
+        rows.append("| " + " | ".join(row) + " |")
+    outline = "\n".join([outline_header, "|" + "---|" * cells, *rows]) + "\n"
+    return "\n".join(lines) + "\n", outline
+
+
+def check_import_short(repo: Repo) -> list[str]:
+    failures: list[str] = []
+    design = fenced_block_after(repo.text(SHORT_DESIGN), r"^#### 设定\.md 模板")
+    ours = fenced_block_after(repo.text(IMPORT_SHORT), r"^## 设定\.md 模板")
+    if not design or not ours:
+        return [f"{IMPORT_SHORT}: 没找到导入或写作端的 设定.md 模板代码块，确认写法后更新本测试"]
+    have = set(headings(ours))
+    for title in headings(design):
+        if "（" not in title and title not in have:  # 带括号的是选用小节（贯穿道具、对标摘要）
+            failures.append(f"{IMPORT_SHORT}: 设定模板缺写作端的「{title}」小节，续写构思会当成没写")
+    for title in ("基本信息", "Phase 2 设计校验"):
+        for label in re.findall(r"^- ([^：{\n]+)：", section_body(design, title), re.M):
+            if not re.search(rf"^- {re.escape(label)}：", ours, re.M):
+                failures.append(f"{IMPORT_SHORT}: 设定模板缺写作端「{title}」的「{label}」字段")
+
+    node = shutil.which("node")
+    header = re.search(r"^\| 结构段/五段功能 .*\|$", repo.text(IMPORT_SHORT), re.M)
+    if node is None:
+        print("跳过导入短篇构思检查夹具：没有 node")
+        return failures
+    if not header:
+        return failures + [f"{IMPORT_SHORT}: 没找到小节大纲 12 列表头，确认写法后更新本测试"]
+    settings, outline = import_short_fixture(ours, header.group(0))
+    with tempfile.TemporaryDirectory(prefix="import-short-") as tmp:
+        (Path(tmp) / "设定.md").write_text(settings, encoding="utf-8")
+        (Path(tmp) / "小节大纲.md").write_text(outline, encoding="utf-8")
+        run = subprocess.run([node, str(ROOT / PHASE2_CHECK), "--json", tmp],
+                             capture_output=True, encoding="utf-8")
+    try:
+        failed = {item["id"] for item in json.loads(run.stdout)["failures"]}
+    except (ValueError, KeyError):
+        return failures + [f"{PHASE2_CHECK}: 输出读不出来：{run.stderr.strip()[:200]}"]
+    for check_id in sorted(failed - IMPORT_SHORT_LEFT_FOR_DESIGN):
+        failures.append(f"{IMPORT_SHORT}: 照导入模板填好的设定过不了构思检查 {check_id}")
+    # 导入承诺续写构思只补缺项：写作端构思要认「本书续写基线」并只补 [待补充]，写正文从下一节接着写。
+    design_text = repo.text(SHORT_DESIGN)
+    if "只补缺项" in repo.text(IMPORT_SHORT) and not ("本书续写基线" in design_text and "[待补充]" in design_text):
+        failures.append(f"{SHORT_DESIGN}: 导入说续写构思只补缺项，构思步骤没写有「本书续写基线」时只补 [待补充]")
+    draft_line = next((line for line in repo.text(SHORT_DRAFT).splitlines() if "**导入项目续写基线**" in line), "")
+    if "第 N+1 节" not in draft_line:
+        failures.append(f"{SHORT_DRAFT}: 导入的半成品要从下一节接着写，「导入项目续写基线」没写第 N+1 节")
+    return failures
+
+
+# ---------- 派助手：调用方 prompt → 助手模板 ----------
+
+ROUTER = "skills/story/SKILL.md"
+REVIEW_PROMPTS = "skills/story-review/references/agent-prompts.md"
+AGENT_TEMPLATES = "skills/story-setup/references/templates/agents"
+EXPLORER = f"{AGENT_TEMPLATES}/story-explorer.md"
+RESEARCHER = f"{AGENT_TEMPLATES}/story-researcher.md"
+CHECKER = f"{AGENT_TEMPLATES}/consistency-checker.md"
+
+
+def prompt_keys(block: str) -> list[str]:
+    """`键：{值}` 形式的 prompt 行里的键。"""
+    return [m.group(1).strip() for m in re.finditer(r"^([^：:\n{]+)[：:]", block, re.M)]
+
+
+def check_agent_dispatch(repo: Repo) -> list[str]:
+    """路由派 explorer / researcher、审稿派 consistency-checker 时，prompt 字段要是模板认的字段。"""
+    failures: list[str] = []
+    router = repo.text(ROUTER)
+    explorer = repo.text(EXPLORER)
+    researcher = repo.text(RESEARCHER)
+    for label, heading, template, rel in (
+        ("story-explorer", r"「查故事资料」交 `story-explorer`", explorer, EXPLORER),
+        ("story-researcher", r"「查资料」交 `story-researcher`", researcher, RESEARCHER),
+    ):
+        block = fenced_block_after(router, heading)
+        keys = prompt_keys(block)
+        if not keys:
+            failures.append(f"{ROUTER}: 找不到派 {label} 的 prompt 模板")
+            continue
+        protocol = section_body(template, "被调用协议")
+        for key in keys:
+            if f"`{key}`" not in protocol:
+                failures.append(f"{ROUTER}: 派 {label} 的 prompt 字段「{key}」不在 {rel} 的被调用协议里")
+    explorer_types = {
+        row[0].strip("`") for header, rows in tables(explorer) if header and header[0] == "query_type" for row in rows
+    }
+    for header, rows in tables(router):
+        if len(header) >= 2 and header[1] == "查询类型":
+            for row in rows:
+                # 单元格第一个反引号值是查询类型，括号里的是参数取值。
+                for query_type in re.findall(r"^`([a-z_]+)`", row[1]):
+                    if query_type not in explorer_types:
+                        failures.append(f"{ROUTER}: 查询类型 {query_type} 不在 {EXPLORER} 的 query_type 表里")
+    # 审稿给短篇填「无追踪」，检查员要认得这个写法，否则会把缺追踪判成证据不足。
+    if "「无追踪」" in repo.text(REVIEW_PROMPTS) and "「无追踪」" not in repo.text(CHECKER):
+        failures.append(f"{CHECKER}: 审稿给短篇写「无追踪」，检查员模板没有对应的短篇分支")
+    return failures
+
+
+# ---------- 导入长篇 → 长篇写作 ----------
+
+LONG_OUTLINE_VIEW = "skills/story-long-write/scripts/outline_view.py"
+LONG_WRITER_PROMPT = "skills/story-long-write/scripts/build_writer_prompt.py"
+OUTLINE_CONTRACT_COPIES = (
+    "skills/story-long-write/scripts/check-outline-contract.js",
+    "skills/story-import/scripts/check-outline-contract.js",
+)
+
+
+def check_import_long(repo: Repo) -> list[str]:
+    """导入卷纲模板原样落盘，写作端取段器要能严格通过并按单元取到卡。"""
+    failures: list[str] = []
+    doc = repo.text(IMPORT_LONG)
+    marker = "#### 目标格式模板（大纲/卷纲_第X卷.md）"
+    if marker not in doc:
+        return [f"{IMPORT_LONG}: 没找到卷纲目标格式模板，确认写法后更新本测试"]
+    after = doc.split(marker, 1)[1]
+    if "```markdown\n" not in after:
+        return [f"{IMPORT_LONG}: 卷纲模板不在 markdown 代码块里，确认写法后更新本测试"]
+    template = after.split("```markdown\n", 1)[1].split("\n```\n", 1)[0]
+    # 写正文组装脚本从单元卡读这两个字段，缺了就只能全量召回。
+    for field in re.findall(r'extract_field\(unit_block or "", "([^"]+)"\)', repo.text(LONG_WRITER_PROMPT)):
+        if "／" not in field and f"- {field}：" not in template:
+            failures.append(f"{IMPORT_LONG}: 卷纲单元卡缺写正文要读的「{field}」")
+    with tempfile.TemporaryDirectory(prefix="import-volume-") as tmp:
+        volume = Path(tmp) / "卷纲_第1卷.md"
+        volume.write_text(template + "\n", encoding="utf-8")
+        run = lambda *args: subprocess.run(
+            [sys.executable, str(ROOT / LONG_OUTLINE_VIEW), *args, str(volume)],
+            capture_output=True, encoding="utf-8")
+        check = run("--check", "--strict")
+        if check.returncode != 0:
+            failures.append(f"{IMPORT_LONG}: 导入卷纲模板过不了写作端 outline_view --check --strict："
+                            f"{(check.stdout + check.stderr).strip()[-200:]}")
+        unit = run("--unit", "L1-01")
+        if unit.returncode != 0 or "单元情绪引擎" not in unit.stdout:
+            failures.append(f"{IMPORT_LONG}: 写作端按单元取不到导入卷纲的单元卡 L1-01")
+    node = shutil.which("node")
+    if node is None:
+        print("跳过细纲检查回报出处的核对：没有 node")
+        return failures
+    with tempfile.TemporaryDirectory(prefix="outline-refs-") as tmp:
+        stub = Path(tmp) / "细纲_第001章.md"
+        stub.write_text("### 第 1 章：空\n", encoding="utf-8")
+        for rel in OUTLINE_CONTRACT_COPIES:
+            run = subprocess.run([node, str(ROOT / rel), "--json", str(stub)], capture_output=True, encoding="utf-8")
+            try:
+                refs = {ref for item in json.loads(run.stdout)["repair_scope"] for ref in item["references"]}
+            except (ValueError, KeyError):
+                failures.append(f"{rel}: 输出读不出来：{run.stderr.strip()[:200]}")
+                continue
+            skill = Path(rel).parent.parent
+            if not refs:
+                failures.append(f"{rel}: 回报里没有可读的模板出处")
+            for ref in sorted(refs):
+                if not (ROOT / skill / ref).is_file():
+                    failures.append(f"{rel}: 回报让读 {ref}，{skill.as_posix()} 里没有这个文件")
+    return failures
+
+
+# ---------- 写作端目标平台 → 审稿平台表；审稿 → consistency-checker ----------
+
+REVIEW_SKILL = "skills/story-review/SKILL.md"
+LONG_SETUP = "skills/story-long-write/references/workflow-setup.md"
+IMPORT_SKILL = "skills/story-import/SKILL.md"
+
+
+def review_platform_rows(repo: Repo) -> list[tuple[str, set[str], str]]:
+    """审稿端「篇幅 | 目标平台 | 叠加的平台表」映射表：[(篇幅, 平台取值, 平台表单元格)]。"""
+    for header, rows in tables(repo.text(REVIEW_SKILL)):
+        if header[:2] == ["篇幅", "目标平台"]:
+            parsed = []
+            for row in rows:
+                if len(row) < 3:
+                    continue
+                values = {re.sub(r"[（(].*?[）)]", "", v).strip() for v in split_terms(row[1], "、")}
+                parsed.append((row[0], values, row[2]))
+            return parsed
+    return []
+
+
+def check_review_platforms(repo: Repo) -> list[str]:
+    """写作端、导入端能写进「目标平台」的每个取值，审稿端都要按篇幅映射到一张平台表或明确不叠加。"""
+    failures: list[str] = []
+    rows = review_platform_rows(repo)
+    if not rows:
+        return [f"{REVIEW_SKILL}: 找不到「篇幅 | 目标平台 | 叠加的平台表」映射表"]
+    covered: dict[str, set[str]] = {"长篇": set(), "短篇": set()}
+    for length, values, target in rows:
+        if length not in covered:
+            failures.append(f"{REVIEW_SKILL}: 平台映射表的篇幅「{length}」不是长篇/短篇")
+            continue
+        covered[length] |= values
+        for path in re.findall(r"`(story-review/references/rubrics/[^`]+\.md)`", target):
+            if not repo.text(f"skills/{path}"):
+                failures.append(f"{REVIEW_SKILL}: 平台映射表指向 {path}，文件不存在")
+
+    producers: list[tuple[str, str, list[str]]] = []
+    setup = re.search(r"- 目标平台：\{([^}；]+)", repo.text(LONG_SETUP))
+    if setup:
+        producers.append((LONG_SETUP, "长篇", split_terms(setup.group(1), "/")))
+    else:
+        failures.append(f"{LONG_SETUP}: 没找到题材定位模板的「目标平台」取值，确认写法后更新本测试")
+    design = re.search(r"- 目标平台：\{([^}]+)\}", repo.text(SHORT_DESIGN))
+    if design:
+        producers.append((SHORT_DESIGN, "短篇", split_terms(design.group(1), "/")))
+    else:
+        failures.append(f"{SHORT_DESIGN}: 没找到设定模板的「目标平台」取值，确认写法后更新本测试")
+    imported = re.search(r"目标平台（长篇：([^；]+)；短篇：([^）]+)）", repo.text(IMPORT_SKILL))
+    if imported:
+        producers.append((IMPORT_SKILL, "长篇", split_terms(imported.group(1), "/")))
+        producers.append((IMPORT_SKILL, "短篇", split_terms(imported.group(2), "/")))
+    else:
+        failures.append(f"{IMPORT_SKILL}: 没找到 Phase 1 的目标平台选项，确认写法后更新本测试")
+
+    for where, length, values in producers:
+        for value in values:
+            if value not in covered[length]:
+                failures.append(f"{where}: {length}目标平台可写「{value}」，{REVIEW_SKILL} 的平台映射表没有这一项")
+    return failures
+
+
+def check_review_checker_fields(repo: Repo) -> list[str]:
+    """consistency-checker 模板要调用方随 prompt 传的字段，审稿端的 prompt 要逐个给出。"""
+    template = repo.text(CHECKER)
+    match = re.search(r"用调用方随 prompt 传入的((?:\s*/?\s*`[a-z_]+`)+)", template)
+    if not match:
+        return [f"{CHECKER}: 没找到「调用方随 prompt 传入的」字段，确认写法后更新本测试"]
+    fields = re.findall(r"`([a-z_]+)`", match.group(1))
+    prompts = repo.text(REVIEW_PROMPTS)
+    start = re.search(r"^\*\*Agent 4: consistency-checker\*\*", prompts, re.M)
+    end = re.search(r"^## ", prompts[start.end():], re.M) if start else None
+    block = prompts[start.end(): start.end() + end.start()] if start and end else ""
+    if not block:
+        return [f"{REVIEW_PROMPTS}: 找不到 consistency-checker 的 prompt 代码块"]
+    return [
+        f"{REVIEW_PROMPTS}: consistency-checker 模板要求 prompt 带「{field}」，审稿端的 prompt 没写"
+        for field in fields
+        if not re.search(rf"^\s*{field}：", block, re.M)
+    ]
+
+
+# ---------- 去味 → 写手 ----------
+
+DESLOP_DETECTOR = "skills/story-deslop/scripts/check-ai-patterns.js"
+DESLOP_EXPRESSION = "skills/story-deslop/references/expression.md"
+DESLOP_GATES = "skills/story-deslop/references/deslop-gates.md"
+WRITER_TEMPLATE = f"{AGENT_TEMPLATES}/narrative-writer.md"
+# 派 narrative-writer 去味的调用方；任务标签必须是写手「被调用协议」认得的那个。
+DESLOP_WRITER_CALLERS = (
+    "skills/story-deslop/references/agent-calls.md",
+    "skills/story-long-write/references/agent-calls.md",
+    "skills/story-short-write/references/agent-calls.md",
+)
+
+
+def check_deslop_handoff(repo: Repo) -> list[str]:
+    failures: list[str] = []
+    detector = repo.text(DESLOP_DETECTOR)
+    m = re.search(r"blocking by default[^(]*\(([^)]*)\)", detector)
+    blocking = {c.strip() for c in m.group(1).split("/")} if m else set()
+    if not blocking:
+        failures.append(f"{DESLOP_DETECTOR}：读不出 blocking 类别清单")
+    node = shutil.which("node")
+    if node is None:
+        print("跳过检测类别索引核对：没有 node")
+    else:
+        listed = subprocess.run([node, str(ROOT / DESLOP_DETECTOR), "--list-review-classes"],
+                                capture_output=True, encoding="utf-8")
+        try:
+            classes = json.loads(listed.stdout)
+        except ValueError:
+            classes = {}
+            failures.append(f"{DESLOP_DETECTOR}：--list-review-classes 输出读不出来")
+        expression = repo.text(DESLOP_EXPRESSION)
+        index = expression[expression.find("## 脚本提示怎样进入语义判断"):]
+        for cls in classes:
+            bold = f"**`{cls}`**" in index
+            if f"`{cls}`" not in index:
+                failures.append(f"{DESLOP_EXPRESSION}：检测类别 {cls} 不在提示索引里")
+            elif bold != (cls in blocking):
+                failures.append(f"{DESLOP_EXPRESSION}：{cls} 的 blocking 加粗与检测器不一致")
+    template = repo.text(WRITER_TEMPLATE)
+    protocol = template[template.find("## 被调用协议"):]
+    known_labels = set(re.findall(r"prompt 标「([^」]+)」", protocol))
+    gate_headings = set(re.findall(r"^## (.+)$", repo.text(DESLOP_GATES), re.M))
+    for rel in DESLOP_WRITER_CALLERS:
+        text = repo.text(rel).replace("\\n", "\n")
+        for label in re.findall(r"任务描述：([^\n`{]*去AI味[^\n`{]*)", text):
+            if label.strip() not in known_labels:
+                failures.append(f"{rel}：任务标签「{label.strip()}」写手不认得（认得：{sorted(known_labels)}）")
+        for cited in re.findall(r"deslop-gates(?:\.md)?「([^」]+)」", text):
+            if cited not in gate_headings:
+                failures.append(f"{rel}：点名的 deslop-gates.md「{cited}」不存在")
+    return failures
+
+
 CHECKS = (
     check_long_report, check_em_cards, check_rhythm, check_short_analyze, check_short_platforms,
-    check_short_scan_handoff, check_long_scan_handoff,
+    check_short_scan_handoff, check_long_scan_handoff, check_import_short, check_agent_dispatch,
+    check_import_long, check_review_platforms, check_review_checker_fields, check_deslop_handoff,
 )
 
 
@@ -703,6 +1041,24 @@ NEGATIVE_CASES = (
      "（假设，`待拆文验证`）\n", "\n- 拆文状态：`待拆文验证`\n", "待拆文验证"),
     ("选题决策不再落在扫榜日期目录", TOPIC_DECISION,
      "`扫榜/{YYYYMMDD}/`", "`选题/{YYYYMMDD}/`", "扫榜/*/选题决策.md"),
+    ("导入短篇设定还用旧的核心反转小节", IMPORT_SHORT, "### 核心支点", "### 核心反转", "核心支点"),
+    ("导入短篇设定丢了付费点字段", IMPORT_SHORT, "- 付费点：第 {N} 节末\n", "", "付费点"),
+    ("导入短篇设定没写反派设计", IMPORT_SHORT, "- 反派设计：不适用（{原因}）\n", "", "villain-contract"),
+    ("短篇构思不认导入的续写基线", SHORT_DESIGN, "有「本书续写基线」时只补标", "有续写基线时只补标", "只补缺项"),
+    ("短篇写正文不从导入的下一节接着写", SHORT_DRAFT, "正文从第 N+1 节接着写", "正文接着写", "第 N+1 节"),
+    ("路由派查资料助手用了模板不认的字段", ROUTER, "查询参数：{", "查询内容：{", "查询内容"),
+    ("资料研究助手模板丢了 cdp_port", RESEARCHER, "- `cdp_port`：CDP 端口号（可选，默认 9222）\n", "", "cdp_port"),
+    ("检查员模板丢了短篇分支", CHECKER, "或 prompt 写「无追踪」", "", "无追踪"),
+    ("导入卷纲单元卡丢了作用域行", IMPORT_LONG, "> 作用域：单元级 L1-01\n", "", "outline_view"),
+    ("导入卷纲单元卡丢了单元情绪引擎", IMPORT_LONG, "- 单元情绪引擎：", "- 情绪引擎：", "单元情绪引擎"),
+    ("审稿平台映射漏了晋江", REVIEW_SKILL, "晋江、其他", "其他", "晋江"),
+    ("审稿平台映射漏了黑岩", REVIEW_SKILL, "七猫、黑岩、红果", "七猫、红果", "黑岩"),
+    ("审稿端不给 consistency-checker 传修订号", REVIEW_PROMPTS, "  state_revision：", "  修订号：", "state_revision"),
+    ("去味索引漏了一类 blocking", DESLOP_EXPRESSION, "**`em-dash`**", "**`em_dash`**", "em-dash"),
+    ("短篇派写手用了写手不认的去味标签", "skills/story-short-write/references/agent-calls.md",
+     "任务描述：审查+去AI味", "任务描述：去AI味+格式检查", "写手不认得"),
+    ("调用方点名的 deslop-gates 小节改了名", DESLOP_GATES,
+     "## 按检测类别或问题限定范围", "## 定点 Gate 映射", "按检测类别或问题限定范围"),
 )
 
 

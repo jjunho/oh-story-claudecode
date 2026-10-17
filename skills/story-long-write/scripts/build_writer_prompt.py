@@ -447,7 +447,7 @@ def build(project: Path, chapter: int, report: list):
         parts.append(f"文风路径：{style_file}（书级权威文风，写作与去味均读全文；摘要只作索引）")
         parts.append(
             "文风优先裁决：`设定/文风.md` 对句段／句法／对话落法／标点形态与删改取向的规定"
-            "按 style-resolution.md 裁决：当前请求 > 本书文风 > active 作者记忆 > 对标 > 通用参考；不覆盖细纲事实、信息边界、调用方所选 Gate 范围及文件结构。"
+            "按 style-resolution.md 裁决：当前请求 > 本书文风 > active 作者记忆 > 对标 > 通用参考；不覆盖细纲事实、信息边界、调用方限定的检查范围及文件结构。"
             "风格冲突按文风写，交付摘要列出「因文风优先而未执行的通用条款」。")
         report.append("文风：custom_style=true，表达冲突按维度裁决；reference 读取仍按任务条件")
     else:
@@ -498,8 +498,12 @@ def build(project: Path, chapter: int, report: list):
     needs = {"题材正文提示卡": card_text, "目标情绪": target_emotion,
              "单元情绪引擎": engine, "单元节拍/章功能分配": tempo}
     why = [name + "缺有效内容" for name, value in needs.items() if not substantive(value)]
-    # 无对标（项目与工作区都没有对标书）时文风本就没有对标可召回：不因 custom_style 缺失拒绝降档
-    no_benchmark = not any(d.is_dir() for base in (project / "对标", project / "拆文库", project.parent / "拆文库")
+    # 无对标（项目与工作区都没有对标书）时文风本就没有对标可召回：不因 custom_style 缺失拒绝降档。
+    # 导入的书在拆文库里留有与书目录同名的拆文目录，那是本书自己，不算对标。
+    def is_benchmark(base: Path, d: Path) -> bool:
+        return d.is_dir() and not (base.name == "拆文库" and d.name == project.name)
+    no_benchmark = not any(is_benchmark(base, d)
+                           for base in (project / "对标", project / "拆文库", project.parent / "拆文库")
                            if base.is_dir() for d in base.iterdir())
     if not custom_style and not no_benchmark:
         why.append("custom_style=false")

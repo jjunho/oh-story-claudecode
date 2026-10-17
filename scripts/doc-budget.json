@@ -37,8 +37,8 @@
     },
     {
       "path": "skills/story-short-write/references/workflow-design.md",
-      "budget": 4000,
-      "why": "短篇 Phase 2 首屏门禁必读；原入口构思/设计/验收原文迁出，非新增技法，Phase 3/4 不预加载。 +50：向作者汇报构思只讲故事与待拍板问题，不报脚本、检查 ID 与表格列数。 v0.8.2 +100：构思交付前把平台基调、作者已定、冷门公式要点写进 设定.md（写正文时刻不再重读构思方法论，只靠落盘接上），汇报末尾建议新开对话写正文；同批删去与 writing-workflow 重复的 12 列说明。 v0.8.2 +150：设定.md 模板补「题材招式」小节与人设速写的声线／口头禅／禁忌、写明有反派时五字段放在设计校验块内，character-designer 结果在完成门禁前压进人设速写——写正文时刻只读设定.md，这些不落盘就丢。 v0.8.x +1400：writing-workflow 并入，本文件成为唯一的设计步骤清单和完整 设定.md 模板，补文风约定、反转与揭露、对标摘要三区；两份合计少 364 字。 v0.8.x +50：「目标平台」加「未定」选项、目标字数写明用阿拉伯数字与平台区间；断点拿不准时查 hooks-chapter 的条件读取；贯穿道具改写成一句做法，删去不存在的招式名。"
+      "budget": 4050,
+      "why": "短篇 Phase 2 首屏门禁必读；原入口构思/设计/验收原文迁出，非新增技法，Phase 3/4 不预加载。 +50：向作者汇报构思只讲故事与待拍板问题，不报脚本、检查 ID 与表格列数。 v0.8.2 +100：构思交付前把平台基调、作者已定、冷门公式要点写进 设定.md（写正文时刻不再重读构思方法论，只靠落盘接上），汇报末尾建议新开对话写正文；同批删去与 writing-workflow 重复的 12 列说明。 v0.8.2 +150：设定.md 模板补「题材招式」小节与人设速写的声线／口头禅／禁忌、写明有反派时五字段放在设计校验块内，character-designer 结果在完成门禁前压进人设速写——写正文时刻只读设定.md，这些不落盘就丢。 v0.8.x +1400：writing-workflow 并入，本文件成为唯一的设计步骤清单和完整 设定.md 模板，补文风约定、反转与揭露、对标摘要三区；两份合计少 364 字。 v0.8.x +50：「目标平台」加「未定」选项、目标字数写明用阿拉伯数字与平台区间；断点拿不准时查 hooks-chapter 的条件读取；贯穿道具改写成一句做法，删去不存在的招式名。 +50：导入的书只补 [待补充] 项、已写节的设定和大纲行不改、新节接在已写节之后（story-import 交来的半成品不再被构思重写）；同批压短两句措辞。"
     },
     {
       "path": "skills/story-setup/references/templates/agents/narrative-writer.md",
@@ -52,8 +52,8 @@
     },
     {
       "path": "skills/story-deslop/references/expression.md",
-      "budget": 3400,
-      "why": "表达层唯一方法源；重点合并电报体与短碎句，取代旧总指南与重复 Gate 详规，完整计入三层诊断路径。"
+      "budget": 3800,
+      "why": "表达层唯一方法源；重点合并电报体与短碎句，取代旧总指南与重复 Gate 详规，完整计入三层诊断路径。 末节加检测器 22 类提示的唯一索引（加粗标 blocking，只标每类对应哪一节，判断规则不变），banned-words 里的重复索引随之删掉。"
     },
     {
       "path": "skills/story-deslop/references/narrative-focus.md",
@@ -1785,6 +1785,15 @@
           "budget": 21300
         },
         {
+          "label": "长篇收尾维护追踪，提交报错时读修订协议",
+          "files": [
+            "skills/story-review/references/quality-rubric.md",
+            "skills/story-review/references/review-tracking.md",
+            "skills/story-review/references/tracking-transaction.md"
+          ],
+          "budget": 28800
+        },
+        {
           "label": "分批审查（平台 rubric＋长篇收尾维护追踪）",
           "files": [
             "skills/story-review/references/quality-rubric.md",
@@ -1795,7 +1804,7 @@
           "budget": 22700
         }
       ],
-      "why": "v0.8.2：审稿按时刻加载——派子代理的 prompt、solo 流程、追踪维护各自成文件，子代理的去味判据由它自己的读取表读，主会话不摘抄。 作者记忆拆分后参考表多一行维护文件指路。 v0.8.2：综合裁决、full/lean 报告模板与 story-explorer 预查询只在派子代理时用，随 agent-prompts 读；分批审查的跨批规则拆到 batch-review，另计分支。"
+      "why": "v0.8.2：审稿按时刻加载——派子代理的 prompt、solo 流程、追踪维护各自成文件，子代理的去味判据由它自己的读取表读，主会话不摘抄。 作者记忆拆分后参考表多一行维护文件指路。 v0.8.2：综合裁决、full/lean 报告模板与 story-explorer 预查询只在派子代理时用，随 agent-prompts 读；分批审查的跨批规则拆到 batch-review，另计分支。 维护追踪时只在提交报错才读 tracking-transaction，另计分支。"
     },
     {
       "label": "审稿 solo（主会话一人审）",
@@ -1924,7 +1933,36 @@
           "budget": 16500
         }
       ],
-      "why": "v0.8.2：部署按宿主拆分，入口只读当前宿主那一份。"
+      "why": "v0.8.2：部署按宿主拆分，入口只读当前宿主那一份。 已部署项目的 target_cli 可以是多端组合，各端部署文件在同一次调用里依次整读，登记为叠加。8 端全选最坏约 44.4K，超过 35K 上限，列入 path_ceiling.exempt：这是部署时刻、不写正文，部署文件都是机械清单，常见的 claude-code＋codex＋opencode 约 28K，4 端以内都在 35K 内。",
+      "stacking": {
+        "budget": 44750,
+        "slots": [
+          [
+            "antigravity"
+          ],
+          [
+            "claude-code"
+          ],
+          [
+            "codex"
+          ],
+          [
+            "generic"
+          ],
+          [
+            "openclaw"
+          ],
+          [
+            "opencode"
+          ],
+          [
+            "reasonix"
+          ],
+          [
+            "zcode"
+          ]
+        ]
+      }
     },
     {
       "label": "长篇扫榜",
@@ -2014,17 +2052,17 @@
         {
           "label": "常规",
           "files": [],
-          "budget": 8400
+          "budget": 7550
         },
         {
           "label": "特殊情况",
           "files": [
             "skills/story-import/references/import-special-cases.md"
           ],
-          "budget": 10100
+          "budget": 8700
         }
       ],
-      "why": "v0.8.2：导入按作者确认点分时刻，作者的决定落盘到导入记录，时刻之间只靠文件交接。 +50：导入记录加「首期深拆」一栏、细纲进度改成「已验收到第 B 章」以便续跑整批重做；超过 200 章时简化摘要的固定落点。"
+      "why": "v0.8.2：导入按作者确认点分时刻，作者的决定落盘到导入记录，时刻之间只靠文件交接。 +50：细纲进度改成「已验收到第 B 章」以便续跑整批重做。 超过 200 章的分档删除，整本书都走拆文管道；按实测收紧。"
     },
     {
       "label": "导入·深度分析（导入部分+拆文入口）",
@@ -2047,8 +2085,7 @@
     {
       "label": "导入·结构迁移",
       "files": [
-        "skills/story-import/SKILL.md",
-        "skills/story-import/references/format-and-structure.md"
+        "skills/story-import/SKILL.md"
       ],
       "branches": [
         {
@@ -2056,17 +2093,25 @@
           "files": [
             "skills/story-import/references/structure-mapping-long.md"
           ],
-          "budget": 19250
+          "budget": 14950
+        },
+        {
+          "label": "长篇·绑了外部对标",
+          "files": [
+            "skills/story-import/references/structure-mapping-long.md",
+            "skills/story-import/references/benchmark-sync.md"
+          ],
+          "budget": 16700
         },
         {
           "label": "短篇",
           "files": [
             "skills/story-import/references/structure-mapping-short.md"
           ],
-          "budget": 14500
+          "budget": 10200
         }
       ],
-      "why": "v0.8.2：结构迁移只读对应篇幅的映射规则。"
+      "why": "v0.8.2：结构迁移只读对应篇幅的映射规则。 正文只整理外壳、不改分段和引号，不再读 format-and-structure（那份改由 story-setup 的写手资料持有）；对标登记与资料同步拆到 benchmark-sync，只在导入记录绑定了外部对标时读，另计分支。"
     },
     {
       "label": "导入·追踪初始化",
@@ -2074,16 +2119,16 @@
         "skills/story-import/SKILL.md",
         "skills/story-import/references/import-tracking.md",
         "skills/story-import/references/character-state-reverse.md",
-        "skills/story-import/references/state-tracking.md"
+        "skills/story-import/references/tracking-initialization.md"
       ],
       "branches": [
         {
           "label": "常规",
           "files": [],
-          "budget": 12450
+          "budget": 12050
         }
       ],
-      "why": "v0.8.2：追踪初始化从结构迁移里独立出来，只读初始化约束，不整读追踪事务协议。"
+      "why": "v0.8.2：追踪初始化从结构迁移里独立出来，只读初始化约束，不整读追踪事务协议。 删掉没有读者的 state-tracking，改登记实际读取的 tracking-initialization。"
     },
     {
       "label": "导入·汇报与激活",
@@ -2408,7 +2453,9 @@
   ],
   "path_ceiling": {
     "limit": 35000,
-    "exempt": [],
+    "exempt": [
+      "部署写作环境（story-setup）"
+    ],
     "why": "v0.8.2：每个角色每次调用（含条件分支与 stacking 登记的叠加组合）的加载不超 35K。开书按作者确认点分时刻，重的时刻换新上下文。"
   }
 }

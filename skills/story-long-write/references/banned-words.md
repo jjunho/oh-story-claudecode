@@ -54,8 +54,8 @@
 | 二修伪自然 | “手里拿着刀，他冲了上去”；连续“伸手拿起、取过、挑开、放下、转身”；强加口误、脏话、每句换行或对话占比 | 一次伴随动作前置不等于油腻；检查是否机械套用另一种句法、流程或格式 |
 | 替换的误改风险 | “美丽动人的笑容”“白色的药片”“手里那截链子”“飞驰的汽车”“他因为害怕而……”；垂下眼、目光微沉、攥拳 | 修饰、指示与原因可能承担区分、承接或动作条件；不能仅为去词删成信息残缺，也不能把每个情绪词换成同一微动作 |
 
-## 提示名称索引
+## 使用边界
 
-脚本提示供定位，不能替代语义结论。`formulaic-parallelism` 对应对比与并列，`quote-emphasis-tic` 对应引号强调；`cliche-density-tic`、`metaphor-density-tic` 对应套词与比喻聚集；`stock-reaction-tic`、`micro-action-tic`、`action-list-tic` 对应反应与动作；`abstract-summary-tic`、`reasoning-chain-tic` 对应总结解释；`overcompressed-prose-tic`、`low-connective-density-tic` 对应过度压缩；`system-notice-formality-tic` 对应载体语域。是否构成问题、如何修复及获准保留，由本次方法与文风裁决确定。
+脚本提示只供定位，不能替代语义结论。是否构成问题、如何修复及获准保留，由本次方法与文风裁决确定。
 
 标点、句长、段落疏密和对话占比均不在此设置统一指标。不通过同义词轮换、错误用字、英文点省略号或机械补动作规避提示。

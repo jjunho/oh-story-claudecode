@@ -2,7 +2,7 @@
 
 Status: implemented
 Date: 2026-10-17
-Related: [拆文按阶段时刻加载](2026-09-26-analyze-stages-by-moment.md)、[写作 references 按时刻重组](../../proposed/architecture/2026-10-17-write-references-by-moment.md)、[长篇拆文契约精修](../bug-fix/2026-10-15-polish-long-analyze-contracts.md)、[短篇拆文逐份精修](../simplification/2026-10-14-polish-story-short-analyze.md)、[交接契约测试](../testing/2026-10-17-handoff-contract-fixtures.md)
+Related: [拆文按阶段时刻加载](2026-09-26-analyze-stages-by-moment.md)、[写作 references 按时刻重组](2026-10-17-write-references-by-moment.md)、[长篇拆文契约精修](../bug-fix/2026-10-15-polish-long-analyze-contracts.md)、[短篇拆文逐份精修](../simplification/2026-10-14-polish-story-short-analyze.md)、[交接契约测试](../testing/2026-10-17-handoff-contract-fixtures.md)
 
 ## Problem
 

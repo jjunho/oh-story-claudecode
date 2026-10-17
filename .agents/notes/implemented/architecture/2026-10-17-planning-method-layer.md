@@ -2,7 +2,7 @@
 
 Status: implemented
 Date: 2026-10-17
-Related: [开书按作者确认点分段加载](2026-09-26-opening-by-author-moments.md)、[长短篇写作 references 按作者时刻和读者重组](../../proposed/architecture/2026-10-17-write-references-by-moment.md)、[35K 加载上限](2026-09-26-per-call-load-ceiling-35k.md)
+Related: [开书按作者确认点分段加载](2026-09-26-opening-by-author-moments.md)、[长短篇写作 references 按作者时刻和读者重组](2026-10-17-write-references-by-moment.md)、[35K 加载上限](2026-09-26-per-call-load-ceiling-35k.md)
 
 ## Problem
 

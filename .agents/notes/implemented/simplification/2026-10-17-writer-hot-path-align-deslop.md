@@ -2,7 +2,7 @@
 
 Status: implemented
 Date: 2026-10-17
-Related: [写作 references 按时刻重组](../../proposed/architecture/2026-10-17-write-references-by-moment.md)、[排纲方法层](../architecture/2026-10-17-planning-method-layer.md)
+Related: [写作 references 按时刻重组](../architecture/2026-10-17-write-references-by-moment.md)、[排纲方法层](../architecture/2026-10-17-planning-method-layer.md)
 
 ## Problem
 

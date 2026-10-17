@@ -63,7 +63,7 @@
 |------|------|---------|---------|
 | 设定/关系.md | 全书 | Phase 2 | 按需：story-explorer relationship 查询、story-review 查设定（不在每章写作回路里逐章读） |
 | 设定/题材定位.md（含 `主对标书` 字段，多对标时必填） | 全书 | Phase 1 建，Phase 2 补全 | Phase 3 大纲、每卷开始前、Phase 4 写前召回 |
-| 设定/题材正文提示卡.md | 全书/题材 | 写第 1 章前由写前召回生成（导入项目可能已有） | Phase 4 每章写作前：按 `genre-prose-cards.md` 索引匹配后读取 `genre-prose-cards/` 目录对应单题材卡优先、`style-genre-modules.md` 通用模块兜底，与通用正文要求、情绪/节奏召回和文风一起组装 prompt |
+| 设定/题材正文提示卡.md | 全书/题材 | 写第 1 章前由写前召回生成 | Phase 4 每章写作前：按 `genre-prose-cards.md` 索引匹配后读取 `genre-prose-cards/` 目录对应单题材卡优先、`style-genre-modules.md` 通用模块兜底，与通用正文要求、情绪/节奏召回和文风一起组装 prompt |
 | 设定/角色/{角色名}.md、设定/势力/{名}.md | 角色/势力 | Phase 2 建主角与关键角色；Phase 3 细纲后增量补全 | Phase 4 状态筛选/写作 |
 | 设定/文风.md（自定义文风·优先级最高） | 本书 | 用户自写（Claude Code 可代写）；导入/拆解不覆盖 | Phase 4 每章写作前：含实质内容则取代对标文风作权威风格基 |
 | 对标/{书名}/文风.md | 对标书 | analyze Stage 6 输出 → story-import 显式绑定或本 skill 首次引用时同步 | Phase 4 每章写作前（文风召回；有自定义文风时降为参考/句长兜底） |
@@ -87,7 +87,7 @@
 1. **角色状态文件缺失** → 当前协议项目先运行 `tracking_commit.py check`，再重跑产生该状态的完整事务；已有正文但 `_tracking-state.json` 缺失时重新 `/story-import`。不得从前文临时推断后直接手写快照。
 2. **角色、普通剧情单元或设定等非主产物子目录缺失** → 按「对标书路径查找」查找项目视图与根目录数据源，仍缺失则跳过该可选模块。本条不适用于 `剧情/情绪模块.md` 和 `剧情/节奏.md`。
 3. **全量召回时 `剧情/情绪模块.md` / `剧情/节奏.md` 缺失** → 写前准备必须停下，设置 `missing_primary_contract: true` 并给出 `repair_action`：重跑 `/story-long-analyze` Stage 3+ 或重新 `/story-import`，不得用摘要文件假装已召回权威模块。成熟项目短路径按 benchmark-recall.md 的条件判定。
-4. **有对标书但 `文风.md` 缺失** → 若有 `设定/文风.md`（含实质内容）走自定义文风模式继续；否则日更文风召回 fail-fast，提示先运行 `/story-long-analyze` Stage 6 并 `/story-import` 同步。**完全无对标项目**则跳过文风召回、不阻塞（有 `设定/文风.md` 时用它写作）。全量召回的情绪/节奏轴（`missing_primary_contract`）独立，自定义文风模式本身不豁免其 fail-fast。
+4. **有对标书但 `文风.md` 缺失** → 若有 `设定/文风.md`（含实质内容）走自定义文风模式继续；否则日更文风召回 fail-fast，请作者用 `/story-long-analyze` 给这本对标书补上文风分析（拆文 Stage 6），再写时首次引用会同步到 `对标/`。**完全无对标项目**则跳过文风召回、不阻塞（有 `设定/文风.md` 时用它写作）。全量召回的情绪/节奏轴（`missing_primary_contract`）独立，自定义文风模式本身不豁免其 fail-fast。
 5. **伏笔/时间线文件缺失** → 视为当前状态损坏，停止写正文；先运行 `tracking_commit.py check`，再用事务修复。卷纲/大纲中的计划不能代替已发生的事实。
 6. **`设定/题材正文提示卡.md` 缺失** → 不阻塞；写前从 `设定/题材定位.md` 精确匹配 `references/genre-prose-cards.md` 索引，并只读取 `references/genre-prose-cards/` 中对应题材单卡（高/中/低置信照原卡标注），无命中再用 `references/style-genre-modules.md` 通用流派模块即时生成短 `genre_prose_card`。只有 `设定/题材定位.md` 也缺失时，退回细纲和目标平台做低置信题材卡，并在意图确认写明。
 
@@ -107,4 +107,4 @@
 - **正文按章拆分**：每章一个文件，`第XXX章_章名.md`
 - 每章写完直接写入 `正文/` 目录，不要先输出到对话
 
-`/story-long-analyze` 产出在 `拆文库/`，首次引用或 `/story-import` 再同步到项目 `对标/`。
+`/story-long-analyze` 产出在 `拆文库/`，首次引用时同步到项目 `对标/`。

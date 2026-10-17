@@ -2,7 +2,7 @@
 
 Status: implemented
 Date: 2026-10-17
-Related: [拆文资料按时刻重组](../architecture/2026-10-17-analyze-docs-by-moment.md)、[扫榜资料按时刻重组](../architecture/2026-10-17-scan-docs-by-moment.md)、[行为锚点而非措辞](2026-07-14-behavior-anchors-not-wording.md)、[静态守卫每条契约只留一个 owner](2026-09-25-static-guard-single-owner.md)
+Related: [拆文资料按时刻重组](../architecture/2026-10-17-analyze-docs-by-moment.md)、[扫榜资料按时刻重组](../architecture/2026-10-17-scan-docs-by-moment.md)、[其余 skill 按时刻重组](../architecture/2026-10-17-other-skills-by-moment.md)、[行为锚点而非措辞](2026-07-14-behavior-anchors-not-wording.md)、[静态守卫每条契约只留一个 owner](2026-09-25-static-guard-single-owner.md)
 
 ## Problem
 
@@ -19,8 +19,13 @@ Related: [拆文资料按时刻重组](../architecture/2026-10-17-analyze-docs-b
   - 短篇拆文：写作端读节点用的字段在节点模板里；`genre_detected` 的取值（题材标尺「题材路由」表第一列加「通用」）都在写作端题材映射表里；导入短篇读的报告小节存在（导入一侧的读法都写成「小节」引用）；短篇写作端和导入读的 `_meta.json` 键在 output-contract 的 schema 模板里；
   - 短篇扫榜：写作端设定模板的目标平台选项都过 `check-phase2-contract.js` 的平台正则；topic-match 有「扫榜平台 → 写作目标平台」对照表，扫榜支持的平台都在表里，推荐的目标平台都在写作端选项里。
   - 短篇扫榜结论：短篇写作端读 `短篇扫榜结论.md` 时点名的小节和「复扫日期」都在 topic-match 模板里；SKILL.md 的情绪对照表和写作端 Phase 1 情绪表一一对应、难度一致；模板「目标情绪」的选项都在写作端六种情绪里；
+  - 导入长篇 → 长篇写作：导入卷纲模板原样落盘过长篇写作 `outline_view.py --check --strict`，`--unit L1-01` 取得到卡，卡里有 `build_writer_prompt.py` 从单元卡读的字段；两份 `check-outline-contract.js` 回报的模板出处在各自 skill 里真实存在；
+  - 导入短篇 → 短篇写作：导入的 `设定.md` 模板有写作端模板的全部小节和基本信息、设计校验字段，照模板填好的设定和小节大纲跑 `check-phase2-contract.js`，只剩留给构思的题材参考、核心招式两项；
+  - 写作端目标平台 → 审稿平台表：长篇题材定位、短篇设定模板、导入 Phase 1 能写的每个平台都按篇幅出现在审稿 SKILL.md 的映射表里，映射到的平台表文件存在；
+  - 派助手：路由派 story-explorer、story-researcher 的 prompt 字段和查询类型在模板的被调用协议与 query_type 表里；审稿派 consistency-checker 时给出模板要的 `last_committed_chapter`、`state_revision`，给短篇写「无追踪」时检查员有短篇分支；
+  - 去味 → 写手：检测器 `--list-review-classes` 的每一类都在 expression 末节索引里，加粗与检测器自报的 blocking 清单一致；去味、长篇、短篇派写手的任务标签写手被调用协议认得，点名的 deslop-gates 小节存在；
   - 长篇选题决策：长篇写作 workflow-setup、长篇拆文 SKILL 与 stage5 点名的「推荐选题」「扫榜日期」「能爆的原因」「差异化定位」「题材组合」都在 topic-decision 模板里；`待拆文验证` 和「能爆的原因」在同一行；stage5 去 `扫榜/*/选题决策.md` 找时，交付一节写明落在 `扫榜/{YYYYMMDD}/`；写作端取排在最前的选题当可行性最高时，模板写明按可行性排序。
-- 反向自检：在内存里改坏 20 处输入（扫榜七处：「选题匹配」改标题、文件头丢「复扫日期」、目标情绪写成题材名、情绪表难度与写作端相反、选题决策丢「题材组合」、`待拆文验证` 挪出「能爆的原因」那一行、选题决策不再落在扫榜日期目录；另外十三处：删「读者在追什么」、写回旧字段「可替换要素」、写回「扩写技法」、模板卡丢「情绪链」、校验不认黑岩、基本信息去掉题材或目标平台、节点去掉位置、快速预览改「黄金三章评分」标题、深度拆解改「可借鉴要素」、短篇报告改「人物分析」标题、schema 改 `reversal_type` 或 `genre_detected`），每处都必须报错，测试才算通过。
+- 反向自检：在内存里改坏 35 处输入，每处都必须报错，测试才算通过。拆文与扫榜 20 处（扫榜七处：「选题匹配」改标题、文件头丢「复扫日期」、目标情绪写成题材名、情绪表难度与写作端相反、选题决策丢「题材组合」、`待拆文验证` 挪出「能爆的原因」那一行、选题决策不再落在扫榜日期目录；另外十三处：删「读者在追什么」、写回旧字段「可替换要素」、写回「扩写技法」、模板卡丢「情绪链」、校验不认黑岩、基本信息去掉题材或目标平台、节点去掉位置、快速预览改「黄金三章评分」标题、深度拆解改「可借鉴要素」、短篇报告改「人物分析」标题、schema 改 `reversal_type` 或 `genre_detected`）；导入、审稿、去味、派助手 15 处（导入短篇设定用旧小节名、丢付费点、没写反派设计；导入卷纲单元卡丢作用域行、丢单元情绪引擎；审稿映射漏晋江、漏黑岩，不给检查员传修订号；路由派助手用模板不认的字段，资料研究模板丢 `cdp_port`，检查员模板丢短篇分支；去味索引漏一类 blocking，短篇派写手用旧标签，deslop-gates 小节改名）。
 - 断言抓的是读取方自己的写法（`拆文报告.md`「小节」、`- 目标平台：{…}`、`### 节点模板`、`## 题材路由`），以后改这些写法要同步改测试。
 
 ## Alternatives considered
