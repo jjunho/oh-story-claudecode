@@ -640,67 +640,67 @@
         {
           "label": "常规",
           "files": [],
-          "budget": 23400
+          "budget": 23440
         },
         {
           "label": "对标登记 ≥2 本",
           "files": [
             "skills/story-long-write/references/cross-book-recall.md"
           ],
-          "budget": 26600
+          "budget": 26640
         },
         {
           "label": "无主对标（八节点自排）",
           "files": [
             "skills/story-long-write/references/outline-methods.md#八节点故事结构"
           ],
-          "budget": 23800
+          "budget": 23840
         },
         {
           "label": "卷纲有自创单元",
           "files": [
             "skills/story-long-write/references/outline-methods.md#情绪模块公式"
           ],
-          "budget": 23900
+          "budget": 23940
         },
         {
           "label": "本卷换地图",
           "files": [
             "skills/story-long-write/references/outline-methods.md#换地图"
           ],
-          "budget": 23850
+          "budget": 23890
         },
         {
           "label": "弧线速查",
           "files": [
             "skills/story-long-write/references/emotional-arc-design.md#六种弧线速查"
           ],
-          "budget": 24200
+          "budget": 24240
         },
         {
           "label": "本卷有反转",
           "files": [
             "skills/story-long-write/references/long-reversal.md#反转类型"
           ],
-          "budget": 26300
+          "budget": 26340
         },
         {
           "label": "有感情线",
           "files": [
             "skills/story-long-write/references/character-relations.md#感情线阶段"
           ],
-          "budget": 24000
+          "budget": 24040
         },
         {
           "label": "有灵感库",
           "files": [
             "skills/story-long-write/references/cross-book-recall.md#公共灵感标签召回"
           ],
-          "budget": 24350
+          "budget": 24390
         }
       ],
       "stacking": {
-        "budget": 31750,
+        "budget": 31790,
         "slots": [
           [
             "对标登记 ≥2 本",
@@ -726,7 +726,7 @@
           ]
         ]
       },
-      "why": "v0.8.2：卷纲时刻的流程、模板与技法由 build_architect_brief.py 拼包，守卫直接运行它计量。 方法层重组：包里只带 workflow-volume 的「排纲方法」一节（主会话的读取清单与作者汇报不进包）、artifact-protocols、outline-methods「卷纲排法」与 reader-contract；emotional-methods「长篇单元情绪引擎」并进「卷纲排法·剧情单元设计」，不再随包。八节点（没有主对标）、情绪模块公式（有自创单元）、换地图、弧线速查、反转类型、感情线阶段、多对标、灵感库都在包外按条件读，按 stacking 叠加；八节点与多对标互斥（有多本对标必有主对标）。"
+      "why": "v0.8.2：卷纲时刻的流程、模板与技法由 build_architect_brief.py 拼包，守卫直接运行它计量。 方法层重组：包里只带 workflow-volume 的「排纲方法」一节（主会话的读取清单与作者汇报不进包）、artifact-protocols、outline-methods「卷纲排法」与 reader-contract；emotional-methods「长篇单元情绪引擎」并进「卷纲排法·剧情单元设计」，不再随包。八节点（没有主对标）、情绪模块公式（有自创单元）、换地图、弧线速查、反转类型、感情线阶段、多对标、灵感库都在包外按条件读，按 stacking 叠加；八节点与多对标互斥（有多本对标必有主对标）。 2026-10-17 排纲 A/B 后补两句刻度说明（开篇单元讲完首个矛盾、作者定卷数时卷内分篇），各分支 +40。"
     },
     {
       "label": "长篇出卷纲（主会话自己做）",
@@ -741,67 +741,67 @@
         {
           "label": "常规",
           "files": [],
-          "budget": 25550
+          "budget": 25590
         },
         {
           "label": "对标登记 ≥2 本",
           "files": [
             "skills/story-long-write/references/cross-book-recall.md"
           ],
-          "budget": 28750
+          "budget": 28790
         },
         {
           "label": "无主对标（八节点自排）",
           "files": [
             "skills/story-long-write/references/outline-methods.md#八节点故事结构"
           ],
-          "budget": 25950
+          "budget": 25990
         },
         {
           "label": "卷纲有自创单元",
           "files": [
             "skills/story-long-write/references/outline-methods.md#情绪模块公式"
           ],
-          "budget": 26050
+          "budget": 26090
         },
         {
           "label": "本卷换地图",
           "files": [
             "skills/story-long-write/references/outline-methods.md#换地图"
           ],
-          "budget": 26000
+          "budget": 26040
         },
         {
           "label": "弧线速查",
           "files": [
             "skills/story-long-write/references/emotional-arc-design.md#六种弧线速查"
           ],
-          "budget": 26350
+          "budget": 26390
         },
         {
           "label": "本卷有反转",
           "files": [
             "skills/story-long-write/references/long-reversal.md#反转类型"
           ],
-          "budget": 28450
+          "budget": 28490
         },
         {
           "label": "有感情线",
           "files": [
             "skills/story-long-write/references/character-relations.md#感情线阶段"
           ],
-          "budget": 26150
+          "budget": 26190
         },
         {
           "label": "有灵感库",
           "files": [
             "skills/story-long-write/references/cross-book-recall.md#公共灵感标签召回"
           ],
-          "budget": 26500
+          "budget": 26540
         }
       ],
       "stacking": {
-        "budget": 33900,
+        "budget": 33940,
         "slots": [
           [
             "对标登记 ≥2 本",
@@ -827,7 +827,7 @@
           ]
         ]
       },
-      "why": "v0.8.2：没有子代理时的卷纲时刻（建议新开对话）；条件读取同任务包。 方法层重组：卷里放什么、怎么排只在 outline-methods「卷纲排法」（每次读），刻度只在 workflow-volume「排纲刻度」；emotional-methods「长篇单元情绪引擎」已并入「卷纲排法」，不再单读。八节点、情绪模块公式、换地图、感情线阶段按 workflow-volume 主会话一节的条件读，八节点与多对标互斥放同一槽。"
+      "why": "v0.8.2：没有子代理时的卷纲时刻（建议新开对话）；条件读取同任务包。 方法层重组：卷里放什么、怎么排只在 outline-methods「卷纲排法」（每次读），刻度只在 workflow-volume「排纲刻度」；emotional-methods「长篇单元情绪引擎」已并入「卷纲排法」，不再单读。八节点、情绪模块公式、换地图、感情线阶段按 workflow-volume 主会话一节的条件读，八节点与多对标互斥放同一槽。 2026-10-17 排纲 A/B 后补两句刻度说明，各分支 +40。"
     },
     {
       "label": "长篇出一批细纲（story-architect 任务包）",
