@@ -61,11 +61,6 @@
       "targets": ["skills/story-setup/references/agent-references/character-basics.md"]
     },
     {
-      "name": "character-design-methods",
-      "source": "skills/story-long-write/references/character-design-methods.md",
-      "targets": ["skills/story-setup/references/agent-references/character-design-methods.md"]
-    },
-    {
       "name": "character-relations",
       "source": "skills/story-long-write/references/character-relations.md",
       "targets": [
@@ -138,19 +133,9 @@
       "targets": ["skills/story-setup/references/agent-references/opening-design.md"]
     },
     {
-      "name": "outline-conflict",
-      "source": "skills/story-long-write/references/outline-conflict.md",
-      "targets": ["skills/story-setup/references/agent-references/outline-conflict.md"]
-    },
-    {
       "name": "outline-methods",
       "source": "skills/story-long-write/references/outline-methods.md",
       "targets": ["skills/story-setup/references/agent-references/outline-methods.md"]
-    },
-    {
-      "name": "outline-rhythm",
-      "source": "skills/story-long-write/references/outline-rhythm.md",
-      "targets": ["skills/story-setup/references/agent-references/outline-rhythm.md"]
     },
     {
       "name": "short-output-contract",
@@ -184,6 +169,11 @@
       "name": "long-genre-catalog",
       "source": "skills/story-long-write/references/long-genre-catalog.md",
       "targets": ["skills/story-setup/references/agent-references/long-genre-catalog.md"]
+    },
+    {
+      "name": "female-audience-writing",
+      "source": "skills/story-long-write/references/female-audience-writing.md",
+      "targets": ["skills/story-setup/references/agent-references/female-audience-writing.md"]
     },
     {
       "name": "writing-craft",
@@ -252,15 +242,6 @@
       ]
     },
     {
-      "name": "analysis-character-design",
-      "reason": "Analysis rubric retains the writer method taxonomy while its instructions migrate to evidence language.",
-      "members": [
-        "skills/story-short-analyze/references/analysis-character-design.md",
-        "skills/story-long-write/references/character-design-methods.md",
-        "skills/story-setup/references/agent-references/character-design-methods.md"
-      ]
-    },
-    {
       "name": "analysis-character-relations",
       "reason": "Shared relationship taxonomy has distinct analysis, review and writing consumers.",
       "members": [
@@ -300,7 +281,7 @@
     },
     {
       "name": "long-emotional-methods-deployment",
-      "reason": "Setup adjusts the title and project-local reader-contract link while deploying the long method.",
+      "reason": "Setup adjusts the title while deploying the long method.",
       "members": [
         "skills/story-long-write/references/emotional-methods.md",
         "skills/story-setup/references/agent-references/long-emotional-methods.md"

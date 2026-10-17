@@ -574,20 +574,25 @@ class PipelineTests(unittest.TestCase):
         info = json.loads(vol.stdout)
         text = Path(info['brief']).read_text(encoding='utf-8')
         self.assertEqual(Path(info['brief']).parent, self.book / '.story' / 'work' / '排纲')
-        self.assertEqual(info['includes'], ['workflow-volume.md', 'artifact-protocols.md',
-                                            'outline-methods.md（八节点故事结构：没有主对标时按它自排）',
-                                            'emotional-methods.md（长篇单元情绪引擎）',
+        self.assertEqual(info['includes'], ['workflow-volume.md（排纲方法）', 'artifact-protocols.md',
+                                            'outline-methods.md（卷纲排法）',
                                             'reader-contract-and-progression.md', 'SKILL.md（新增物三级）',
                                             '按条件可读（包外）'])
         # 包外读不到 SKILL.md：新增物三级判据随包；流程点名的条件参考给出绝对路径与小节。
         self.assertIn('**先问作者**：新主线事件或反转', text)
         self.assertIn(f"{refs / 'long-reversal.md'}` 「反转类型」一节", text)
         self.assertNotIn('## 情感虐心三板斧', text)
-        # 无主对标时按八节点自排：节点速查与规则随包，同文件其余方法不进包。
-        self.assertIn('### 各节点关键规则', text)
-        self.assertNotIn('### 爽点节奏公式', text)
-        self.assertNotIn('## 五步大纲创建法', text)
-        self.assertIn((refs / 'workflow-volume.md').read_text(encoding='utf-8').strip()[:200], text)
+        # 卷纲排法每次随包；八节点、情绪模块公式、换地图按条件在包外读。
+        self.assertIn('### 剧情单元设计', text)
+        self.assertNotIn('## 八节点故事结构', text)
+        self.assertNotIn('## 情绪模块公式', text)
+        self.assertIn(f"{refs / 'outline-methods.md'}` 「八节点故事结构」一节", text)
+        self.assertIn(f"{refs / 'character-relations.md'}` 「感情线阶段」一节", text)
+        # 流程文件只截「排纲方法」：主会话的读取清单与作者汇报模板不进包。
+        self.assertIn('## 排纲方法', text)
+        self.assertIn('### 排纲刻度', text)
+        self.assertNotIn('<!-- author-report -->', text)
+        self.assertNotIn('## 主会话', text)
         self.assertNotIn('## 细纲（第 N 章）', text)
         self.assertLess(info['chars'], 30000)
         # story-architect 不能执行命令：覆盖本批章节的单元闭包由脚本取好放进包里。
@@ -597,8 +602,10 @@ class PipelineTests(unittest.TestCase):
                                      '--chapters', '1-3').stdout)
         later = json.loads(self.call('build_architect_brief.py', '--project', self.book, '--task', 'outline',
                                      '--chapters', '4-10').stdout)
-        self.assertIn('opening-design.md', first['includes'])
-        self.assertNotIn('opening-design.md', later['includes'])
+        self.assertIn('opening-design.md（开篇规划）', first['includes'])
+        self.assertFalse(any(name.startswith('opening-design.md') for name in later['includes']))
+        self.assertIn('plot-core-methods.md', first['includes'])
+        self.assertIn('plot-core-methods.md（不含开篇噱头）', later['includes'])
         self.assertTrue(any('单元 L1-01' in name for name in first['includes']))
         self.assertTrue(any('单元 L1-02' in name for name in later['includes']))
         self.assertFalse(any('单元 L1-01' in name for name in later['includes']))
@@ -621,6 +628,14 @@ class PipelineTests(unittest.TestCase):
                                      '--chapters', '30-31', '--rules-only').stdout)
         self.assertFalse(any('卷纲取段' in name for name in rules['includes']))
         self.assertIn('## 细纲（第 N 章）', outline_text)
+        self.assertIn('## 开篇规划', outline_text)
+        self.assertNotIn('## 开篇落笔', outline_text)
+        self.assertIn('## 高潮构建公式', outline_text)
+        self.assertIn('## 噱头分类与开篇流程', outline_text)
+        self.assertNotIn('<!-- author-report -->', outline_text)
+        later_text = Path(later['brief']).read_text(encoding='utf-8')
+        self.assertIn('## 高潮构建公式', later_text)
+        self.assertNotIn('## 噱头分类与开篇流程', later_text)
         # 细纲模板要求从章首 7 式、章尾 13 式里选：两张表随包，实战模板不进包。
         self.assertIn('## 章尾钩子 13 式', outline_text)
         self.assertIn('## 章首钩子 7 式', outline_text)
@@ -635,9 +650,12 @@ class PipelineTests(unittest.TestCase):
         world_text = Path(world['brief']).read_text(encoding='utf-8')
         self.assertIn('## 作者已定', world_text)  # 设定模板随包，定方向落盘的作者决定有处可读
         self.assertIn('核心梗三层递进设计', world_text)
+        self.assertIn('## 金手指', world_text)
+        self.assertIn(f"{refs / 'character-relations.md'}` 「感情线阶段」一节", world_text)
         self.assertNotIn('## 微创新与差异化设计', world_text)
         self.assertNotIn('## 感情流人设核心法', world_text)
         self.assertNotIn('全书体量与阶段总览', world_text)
+        self.assertNotIn('主会话自己定设定时读', world_text)  # 主会话的读取清单不进包
         self.assertIn(f"{refs / 'female-audience-writing.md'}` 整份", world_text)
         self.assertIn('按下附「新增物三级」属先问作者', world_text)
         too_many = self.call('build_architect_brief.py', '--project', self.book, '--task', 'outline', '--chapters', '1-11')

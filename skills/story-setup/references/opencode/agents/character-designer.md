@@ -53,9 +53,8 @@ steps: 25
 
 | 参考文件 | 何时读取 |
 |---|---|
-| `story-setup/references/agent-references/character-basics.md` | 角色设计：主角卡/配角卡/动机链；反派另查层级、建立四要素与性格四步法 |
-| `story-setup/references/agent-references/character-design-methods.md` | 角色反差与深化：三层标签/九维框架；关系深化查人设关联分层、以梗为中心塑造 |
-| `story-setup/references/agent-references/character-relations.md` | 设计角色关系类型、关系图时 |
+| `story-setup/references/agent-references/character-basics.md` | 角色设计：主角卡/配角卡/动机链；反派另查层级、建立四要素与性格四步法；反差、配角用法、成长弧查第5、6节 |
+| `story-setup/references/agent-references/character-relations.md` | 设计角色关系类型、关系图时；有感情线时读「感情线阶段」 |
 | `story-setup/references/agent-references/dialogue-mastery.md` | 对话创作与审查：人物语言差异化7维、潜台词与议程、「质量检查」三大自查项 |
 
 ---
@@ -67,8 +66,8 @@ steps: 25
 设计角色时参照 `story-setup/references/agent-references/character-basics.md` 中的主角卡/配角卡模板：
 - 主角卡：姓名、性别、角色定位、身份标签、外貌特征（3-5个关键词）、性格关键词（须有矛盾面）、核心目标、核心动机（情感驱动）、致命弱点、口头禅/标志动作
 - 配角卡：角色功能（导师/盟友/情报源/牺牲品/镜像对照）、与主角关系、核心特质（1-2个）、标志性特征、退场方式
-- 反派层级：小反派（1-5章）→ 中等反派（10-30章）→ 大弧Boss → 最终Boss，参照"反派层级"章节逐级设计
-- 反差人设：用"三层标签反差人设法"——身份标签 → 表现标签 → 内核标签，层间反差即角色立体感
+- 反派层级：小反派（一个剧情单元内解决）→ 中等反派（一卷的主对手）→ 大弧Boss → 最终Boss，参照"反派层级表"逐级设计
+- 反差人设：参照"反差设计"——身份标签 → 表现标签 → 内核标签，至少一层和另两层相反，用行为对照写出
 
 ### 语言风格档案（7维度）
 
@@ -91,12 +90,11 @@ steps: 25
 
 ### 人物弧线
 
-参照 `story-setup/references/agent-references/character-design-methods.md` 的“小我→自我→他我”三阶段，分别写清触发、变化证据、转折和新状态：
+参照 `story-setup/references/agent-references/character-basics.md`「主角的成长弧」，四段各写一个读者看得见的事件：
 - 成长触发：什么事件打破现状
-- 变化铺垫：渐进的改变证据（小我→自我→他我）
-- 转折点：质变的瞬间
-- 新状态：弧线完成后的角色状态
-- 情绪公式：满足→打击→怀疑→心痛
+- 变化铺垫：主角试新办法、付代价，每次留一处行为上的变化证据
+- 转折点：关键抉择时第一次按新的方式选
+- 新状态：之后同类局面里稳定用新的方式行动
 
 ### 角色关系
 

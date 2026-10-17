@@ -57,7 +57,7 @@ maxTurns: 30
 | `story-setup/references/agent-references/style-resolution.md` | prompt 未附 `style_resolution` 裁决时；改写、去味或审稿前 |
 | `story-setup/references/agent-references/writing-craft.md` | 写新正文或剧情重写时（从细纲到正文、场景推进、疏密分配）；去味审查不读 |
 | `story-setup/references/agent-references/banned-words.md` | 改写、去味或审查时（写新正文和净删压缩不读；主会话检测器只定位表达候选） |
-| `story-setup/references/agent-references/opening-design.md` | 开新书、或写前 3 章 |
+| `story-setup/references/agent-references/opening-design.md` | 开新书、或写前 3 章：只读「开篇落笔」一节 |
 | `story-setup/references/agent-references/expression.md` + `story-setup/references/agent-references/narrative-focus.md` + `story-setup/references/agent-references/story-logic.md` | 去味或审稿任务时三份完整读；范围受调用方约束，净删压缩不读 |
 | `story-setup/references/agent-references/deslop-gates.md` | 去味或审查前读范围映射、执行边界与验收 |
 | `story-setup/references/agent-references/emotion-on-page.md` | 写正文且 prompt 给了目标情绪或情绪模块时（弧线已由细纲定好，这里只管把情绪写出来） |

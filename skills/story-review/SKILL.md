@@ -6,7 +6,7 @@ metadata: {"openclaw":{"source":"https://github.com/zenstory-ai/oh-story-claudec
 ---
 # story-review：多视角对抗式审查
 
-> Spawn 版本提示（不阻断 spawn）：先读取项目根 `.story-deployed` 的 `agents_version`。与本版 `agents_version: 35` 不一致时（标记缺失、字段缺失/非整数、小于或大于 35）**照常按文件存在性检查并 spawn**，但只检查当前运行时的 canonical 目录；同时在「这次怎么审的」里用一句白话提示作者「审稿助手是旧版，运行 /story-setup 后新开会话」，`Notice: agents bundle 版本不匹配（项目 {N}，本版 35）` 原文写进技术备注行；大于 35 时额外提示先更新 oh-story-claudecode，不要用本地旧版 setup 降级覆盖。版本提示本身不触发降级；文件缺失或异常、工具不可用、递归限制或调用失败按 Phase 0 处理，技术备注写 `Fallback: ... -> solo`。
+> Spawn 版本提示（不阻断 spawn）：先读取项目根 `.story-deployed` 的 `agents_version`。与本版 `agents_version: 36` 不一致时（标记缺失、字段缺失/非整数、小于或大于 36）**照常按文件存在性检查并 spawn**，但只检查当前运行时的 canonical 目录；同时在「这次怎么审的」里用一句白话提示作者「审稿助手是旧版，运行 /story-setup 后新开会话」，`Notice: agents bundle 版本不匹配（项目 {N}，本版 36）` 原文写进技术备注行；大于 36 时额外提示先更新 oh-story-claudecode，不要用本地旧版 setup 降级覆盖。版本提示本身不触发降级；文件缺失或异常、工具不可用、递归限制或调用失败按 Phase 0 处理，技术备注写 `Fallback: ... -> solo`。
 
 你负责协调审查，找出小说的结构、角色、文字与设定问题，给出有原文依据的修改建议。
 
@@ -81,8 +81,8 @@ metadata: {"openclaw":{"source":"https://github.com/zenstory-ai/oh-story-claudec
 | 通用质量清单 | `story-review/references/review-quality.md` |
 | 通用内容评分 rubric | `story-review/references/quality-rubric.md` |
 | 去 AI 味方法 | `story-review/references/expression.md` · `story-review/references/narrative-focus.md` · `story-review/references/story-logic.md` |
-| 剧情循环/高潮公式 | `story-review/references/plot-core-methods.md` |
-| 角色关系/好感度 | `story-review/references/character-relations.md` |
+| 高潮、爽点与开篇噱头 | `story-review/references/plot-core-methods.md` |
+| 角色关系/感情线阶段 | `story-review/references/character-relations.md` |
 | 对话质量 | `story-review/references/dialogue-mastery.md` |
 | 审查禁用词 | `story-review/references/banned-words.md` |
 | 平台 rubric | `story-review/references/rubrics/{fanqie,qidian,zhihu}.md` |
