@@ -15,9 +15,11 @@
 - world：workflow-setup.md 的 Phase 2 与设定模板、character-basics.md、long-genre-mechanics.md 的
   「核心梗三层递进设计」、character-relations.md 的「人物关系类型」、reader-contract-and-progression.md。
 - volume：workflow-volume.md（卷纲流程、排纲自查、节奏锚与对标迁移）、artifact-protocols.md
-  （大纲与卷纲模板）、emotional-methods.md 的「长篇单元情绪引擎」（排纲自查第 1 项）、
+  （大纲与卷纲模板）、outline-methods.md 的「八节点故事结构」到「爽点节奏公式」之前（无主对标时自排；
+  脚本判断不了本书有没有主对标，所以总是带上）、emotional-methods.md 的「长篇单元情绪引擎」（排纲自查第 1 项）、
   reader-contract-and-progression.md（第 4 项契约四问）。
 - outline：workflow-outline.md（批次步骤、细纲模板与验收、补纲、设定补全、排纲底稿模板）、
+  long-chapter-hooks.md 的「章尾钩子 13 式」与「章首钩子 7 式」（细纲模板要从中选；只带名称与公式，示例列不进包）、
   character-basics.md 的主角卡与配角卡模板；首章在范围内时加 opening-design.md。
 流程里点名、但只在某些书才用得上的参考（多对标时的跨书召回、女频手册、弧线与反转速查、灵感库）
 不进包，列在包末「按条件可读」，给出绝对路径与小节，条件满足才读。
@@ -67,6 +69,12 @@ def section(text: str, start: str, end: str | None = None) -> str:
         raise SystemExit(f"ERROR: reference 里找不到小节「{start}」")
     stop = re.search(rf"^#+\s*{re.escape(end)}.*$", text[match.end():], re.M) if end else None
     return text[match.start(): match.end() + stop.start() if stop else len(text)].rstrip()
+
+
+def drop_last_column(text: str) -> str:
+    """表格去掉末列：钩子表的示例列不进包，免得细纲照抄示例的句子形状。"""
+    return "\n".join("|".join(line.split("|")[:-2]) + "|" if line.startswith("|") else line
+                     for line in text.splitlines())
 
 
 def new_addition_tiers() -> str:
@@ -187,6 +195,8 @@ def build(task: str, volume: int | None, chapters: tuple[int, int] | None,
                 "的结论各一句、要作者定的事（没有写「无」）。")
         parts = [("workflow-volume.md", read_reference("workflow-volume.md")),
                  ("artifact-protocols.md", read_reference("artifact-protocols.md")),
+                 ("outline-methods.md（八节点故事结构：没有主对标时按它自排）",
+                  section(read_reference("outline-methods.md"), "八节点故事结构", "爽点节奏公式")),
                  ("emotional-methods.md（长篇单元情绪引擎）",
                   section(read_reference("emotional-methods.md"), "长篇单元情绪引擎", "决策路由")),
                  ("reader-contract-and-progression.md", read_reference("reader-contract-and-progression.md"))]
@@ -199,6 +209,8 @@ def build(task: str, volume: int | None, chapters: tuple[int, int] | None,
                 "每章一句核心事件、要作者定的事（没有写「无」）。")
         basics = read_reference("character-basics.md")
         parts = [("workflow-outline.md", read_reference("workflow-outline.md")),
+                 ("long-chapter-hooks.md（章尾钩子 13 式、章首钩子 7 式）",
+                  drop_last_column(section(read_reference("long-chapter-hooks.md"), "章尾钩子 13 式", "章尾实战模板"))),
                  ("character-basics.md（主角卡、配角卡）", section(basics, "第1节：主角卡", "第3节"))]
         if first <= 3:
             parts.append(("opening-design.md", read_reference("opening-design.md")))

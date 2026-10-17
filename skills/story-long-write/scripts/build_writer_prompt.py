@@ -238,26 +238,34 @@ GENRE_CARD_DIR = Path(__file__).resolve().parent.parent / "references" / "genre-
 def match_genre_cards(project: Path):
     """题材正文提示卡缺失时，按「题材类型」原文匹配题材卡（卡头的 genre 与 aliases），替主会话省掉整读索引。
 
-    按在题材类型里出现得越靠前越优先（主题材在前），同位置按置信度高→低；最多返回主、辅两张：[(路径, 置信度)]。"""
+    最长匹配优先：一张卡命中的词落在另一张卡命中的更长的词里面（「玄幻言情」里的「玄幻」）时不算这张卡命中。
+    按在题材类型里出现得越靠前越优先（主题材在前），同位置按命中词更长、再按置信度高→低；
+    最多返回主、辅两张：[(路径, 置信度)]。"""
     raw = genre_line(project).casefold()
     if not raw or not GENRE_CARD_DIR.is_dir():
         return []
     rank = {"high": 0, "medium": 1, "low": 2}
-    hits = []
+    spans = []  # (起点, 终点, 卡, 置信度)：每张卡每个命中词在题材类型里的每处出现
     for card in sorted(GENRE_CARD_DIR.glob("*.md")):
         head = (read_text(card) or "").split("---")
         meta = head[1] if len(head) > 2 else ""
         genre = re.search(r"^genre:\s*(.+)$", meta, re.M)
         aliases = re.search(r"^aliases:\s*\[(.*)\]", meta, re.M)
         confidence = re.search(r"^confidence:\s*(\w+)", meta, re.M)
+        level = confidence.group(1) if confidence else "low"
         names = [genre.group(1).strip()] if genre else [card.stem]
         names += [a.strip() for a in aliases.group(1).split(",")] if aliases else []
-        where = [raw.find(name.casefold()) for name in names if name and name.casefold() in raw]
-        if where:
-            level = confidence.group(1) if confidence else "low"
-            hits.append((min(where), rank.get(level, 2), card, level))
-    hits.sort(key=lambda row: (row[0], row[1], row[2].name))
-    return [(card, level) for _, _, card, level in hits[:2]]
+        for name in {n.casefold() for n in names if n}:
+            spans += [(m.start(), m.end(), card, level) for m in re.finditer(re.escape(name), raw)]
+    best = {}
+    for start, end, card, level in spans:
+        if any(c != card and s <= start and end <= e and e - s > end - start for s, e, c, _ in spans):
+            continue
+        key = (start, -(end - start), rank.get(level, 2), card.name)
+        if card not in best or key < best[card][0]:
+            best[card] = (key, level)
+    hits = sorted((key, card, level) for card, (key, level) in best.items())
+    return [(card, level) for _, card, level in hits[:2]]
 
 
 def author_decided(project: Path):

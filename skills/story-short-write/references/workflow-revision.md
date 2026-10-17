@@ -2,7 +2,7 @@
 
 本文件中的 `scripts/` 与 `references/` 路径均相对本 skill 根目录。精修必读本文件与 `short-format.md`（格式快速检查、字数口径）；新对话里精修也先读它。
 
-Phase 3 写手只做覆盖与格式自检。Phase 4 由 narrative-writer 或主会话一方读 `references/short-deslop.md` 与 `references/deslop-gates.md`，定点修复清单及检测问题，再查一致性；完整三层诊断另走 `/story-deslop`。S1/S2 与 blocking 必须修，S3 与 advisory 建议看，S4 仅提示。主会话最终扫描、验收；改后只复核改动并重跑受影响检查。
+Phase 3 写手只做覆盖与格式自检。Phase 4 主会话自己修时读 `references/short-deslop.md` 与 `references/deslop-gates.md`，交写手按 agent-calls.md 派，定点修复清单及检测问题，再查一致性；完整三层诊断另走 `/story-deslop`。S1/S2 与 blocking 必须修，S3 与 advisory 建议看，S4 仅提示。主会话最终扫描、验收；改后只复核改动并重跑受影响检查。
 
 按文末「精修清单」完成检查。文件模式依次运行 `node scripts/check-ai-patterns.js --check --fail-on=blocking 正文.md`、`node scripts/check-outline-copy.js --outline 小节大纲.md 正文.md`、`node scripts/normalize-punctuation.js 正文.md`、`node scripts/check-degeneration.js --check 正文.md`，blocking 先改正文再复扫。照搬检测报出的誓词、关键原话等功能性台词保留，登记进 `小节大纲.md` 末尾「复沓锚句」再复检，其余现场重写。
 

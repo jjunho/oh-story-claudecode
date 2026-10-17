@@ -430,6 +430,18 @@ class PipelineTests(unittest.TestCase):
         cards = SCRIPTS.parent / 'references' / 'genre-prose-cards'
         self.assertIn(f"主题材 {cards / '都市日常.md'}（置信度 high）；辅题材 {cards / '豪门总裁.md'}", result.stdout)
         self.assertIn('召回降档：不成立（题材正文提示卡缺有效内容）', result.stdout)
+        # 最长匹配优先：「玄幻言情」「仙侠言情」里的「玄幻」「仙侠」是别的卡的短别名，不能抢走主卡。
+        for line, main, loser in [('玄幻言情', '玄幻言情.md', '传统玄幻.md'),
+                                  ('仙侠言情', '玄幻言情.md', '东方仙侠.md'),
+                                  ('传统玄幻 · 玄幻言情', '传统玄幻.md', None)]:
+            with self.subTest(genre=line):
+                self.put('设定/题材定位.md', f'# 题材定位\n- 题材类型：{line}\n')
+                out = self.build().stdout
+                self.assertIn(f"主题材 {cards / main}", out)
+                if loser:
+                    self.assertNotIn(str(cards / loser), out)
+                else:
+                    self.assertIn(f"辅题材 {cards / '玄幻言情.md'}", out)
         self.put('设定/题材定位.md', '# 题材定位\n- 题材类型：蒸汽朋克考古\n')
         self.assertIn('题材卡无匹配', self.build().stdout)
 
@@ -563,6 +575,7 @@ class PipelineTests(unittest.TestCase):
         text = Path(info['brief']).read_text(encoding='utf-8')
         self.assertEqual(Path(info['brief']).parent, self.book / '.story' / 'work' / '排纲')
         self.assertEqual(info['includes'], ['workflow-volume.md', 'artifact-protocols.md',
+                                            'outline-methods.md（八节点故事结构：没有主对标时按它自排）',
                                             'emotional-methods.md（长篇单元情绪引擎）',
                                             'reader-contract-and-progression.md', 'SKILL.md（新增物三级）',
                                             '按条件可读（包外）'])
@@ -570,6 +583,10 @@ class PipelineTests(unittest.TestCase):
         self.assertIn('**先问作者**：新主线事件或反转', text)
         self.assertIn(f"{refs / 'long-reversal.md'}` 「反转类型」一节", text)
         self.assertNotIn('## 情感虐心三板斧', text)
+        # 无主对标时按八节点自排：节点速查与规则随包，同文件其余方法不进包。
+        self.assertIn('### 各节点关键规则', text)
+        self.assertNotIn('### 爽点节奏公式', text)
+        self.assertNotIn('## 五步大纲创建法', text)
         self.assertIn((refs / 'workflow-volume.md').read_text(encoding='utf-8').strip()[:200], text)
         self.assertNotIn('## 细纲（第 N 章）', text)
         self.assertLess(info['chars'], 30000)
@@ -604,6 +621,14 @@ class PipelineTests(unittest.TestCase):
                                      '--chapters', '30-31', '--rules-only').stdout)
         self.assertFalse(any('卷纲取段' in name for name in rules['includes']))
         self.assertIn('## 细纲（第 N 章）', outline_text)
+        # 细纲模板要求从章首 7 式、章尾 13 式里选：两张表随包，实战模板不进包。
+        self.assertIn('## 章尾钩子 13 式', outline_text)
+        self.assertIn('## 章首钩子 7 式', outline_text)
+        self.assertNotIn('## 章尾实战模板', outline_text)
+        # 只带名称与公式两列，示例句不进包（细纲会照抄示例的句子形状）。
+        self.assertIn('| 13 | 留白钩子 | 只展示反应，不揭示发生了什么 |\n', outline_text)
+        self.assertNotIn('他看了信', outline_text)
+        self.assertIn('long-chapter-hooks.md（章尾钩子 13 式、章首钩子 7 式）', later['includes'])
         self.assertIn('第1节：主角卡', outline_text)
         self.assertNotIn('第3节：反派设计', outline_text)
         world = json.loads(self.call('build_architect_brief.py', '--project', self.book, '--task', 'world').stdout)
@@ -772,6 +797,29 @@ class ImportOutlineBriefTests(unittest.TestCase):
         result = self.call('1-12')
         self.assertEqual(result.returncode, 2)
         self.assertIn('没有卷纲', result.stderr)
+
+
+class VolumeTemplateContractTests(unittest.TestCase):
+    """artifact-protocols.md 的卷纲模板原样落盘，必须过取段器的严格校验。"""
+
+    def test_template_passes_strict_check(self):
+        doc = (ROOT / 'skills/story-long-write/references/artifact-protocols.md').read_text(encoding='utf-8')
+        after = doc.split('\n## 大纲/卷纲_第X卷.md\n', 1)[1]
+        template = after.split('```markdown\n', 1)[1].split('\n```\n', 1)[0]
+        with tempfile.TemporaryDirectory(prefix='volume-template-') as tmp:
+            volume = Path(tmp) / '大纲' / '卷纲_第一卷.md'
+            volume.parent.mkdir()
+            volume.write_text(template + '\n', encoding='utf-8')
+            run = lambda *args: subprocess.run(
+                [sys.executable, str(SCRIPTS / 'outline_view.py'), *args, str(volume)],
+                capture_output=True, encoding='utf-8', env={**os.environ, 'PYTHONIOENCODING': 'utf-8'})
+            check = run('--check', '--strict')
+            self.assertEqual(check.returncode, 0, check.stdout + check.stderr)
+            self.assertIn('问题 0 ／ 告警 0', check.stdout)
+            unit = run('--unit', 'L1-01')
+            self.assertEqual(unit.returncode, 0, unit.stderr)
+            self.assertIn('### 剧情单元 L1-01', unit.stdout)
+            self.assertEqual(unit.stderr, '')
 
 
 if __name__ == '__main__':
