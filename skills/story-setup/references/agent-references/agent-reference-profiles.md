@@ -44,8 +44,7 @@ Long profile 禁止读取 `short-*` 文件，不得采用“6 章”“每节 50
 | 文件 | 读取条件 |
 |---|---|
 | [short-genre-formulas.md](short-genre-formulas.md) | 需要短篇题材结构骨架时 |
-| [short-paragraph-hooks.md](short-paragraph-hooks.md) | 设计段落留存、付费断点与小节内钩子 |
-| [short-chapter-hooks.md](short-chapter-hooks.md) | 设计节首/节尾钩子、主悬念承接与全文收束 |
+| [short-chapter-hooks.md](short-chapter-hooks.md) | 设计节尾、节首、段落钩子、付费断点与全文悬念 |
 | [short-emotional-methods.md](short-emotional-methods.md) | 设计单篇内的羁绊、撕裂、拉扯与余韵，选整篇弧线与转折位置 |
 | [short-reversal.md](short-reversal.md) | 设计短篇线索、误导与揭示；两层反转按所选方案使用 |
 | [short-quality.md](short-quality.md) | 审查全文密度、付费点、反转证据链和结尾兑现 |

@@ -17,7 +17,7 @@ metadata: {"openclaw":{"source":"https://github.com/zenstory-ai/oh-story-claudec
 | 时刻 | 作者确认什么 | 读什么 | 落盘 |
 |---|---|---|---|
 | 定情绪（Phase 1） | 读者读完的感觉、题材方向 | 本文件 | 进构思时写入 `设定.md` |
-| 构思（Phase 2） | 故事核、人物、反转、付费点 | ① `references/workflow-design.md` + `references/writing-workflow.md`、`references/submission-craft.md`、`references/short-craft.md`、`references/short-reversal.md` ② 核心 10 题材读一个精确的 `references/genre-styles/{题材}.md`，冷门题材读 `references/genre-writing-formulas.md` ③ 有反派或真相揭露设计时读 `references/villain-and-reveal.md`，不适用时在设计校验区写明原因 | `设定.md`、`小节大纲.md` |
+| 构思（Phase 2） | 故事核、人物、反转、付费点 | ① `references/workflow-design.md`、`references/submission-craft.md`、`references/short-craft.md`、`references/short-reversal.md` ② 核心 10 题材读一个精确的 `references/genre-styles/{题材}.md`，冷门题材读 `references/genre-writing-formulas.md` ③ 有反派或真相揭露设计时读 `references/villain-and-reveal.md`，不适用时在设计校验区写明原因 | `设定.md`、`小节大纲.md` |
 | 写正文（Phase 3–4） | 成稿 | Phase 3 写正文前完整读取 `references/workflow-draft.md`，按其「写前加载」读写作手法；Phase 4 精修前完整读取 `references/workflow-revision.md` | `正文.md` |
 
 构思必读项须在首次写入 `设定.md` / `小节大纲.md` 前读完。任一必需路径不存在、不可读，或题材尚未对应到唯一 reference 时，立即停止，报告准确路径或待定项，**不得创建或修改故事产物**。故事文件只记录选出的题材招式、反转计算等设计，不写“已读 references”的回执。进入每个时刻都按当前任务完整回读。
@@ -101,7 +101,7 @@ metadata: {"openclaw":{"source":"https://github.com/zenstory-ai/oh-story-claudec
 
 ### Phase 3 完成门槛（进入 Phase 4 前必须通过）
 
-- [ ] 总字数进入锁定的用户范围；未指定时进入 8000-20000 默认范围
+- [ ] 总字数进入锁定的用户范围；作者没给时进入 `设定.md` 的目标字数（构思时按所选平台的投稿区间定，未定平台用 8000-12000，见 submission-craft.md）
 - [ ] 每节完成其批准情节点或状态变化；没有为拉齐长度补冲突、对话、回忆或旁人反应
 - [ ] 节数 = 小节大纲规划节数（不得合并/省略）
 - [ ] 身体细节按叙事功能判断，不设次数上限；不对“手、眼、心”等单字计数改稿
@@ -124,7 +124,7 @@ metadata: {"openclaw":{"source":"https://github.com/zenstory-ai/oh-story-claudec
 **流水线：** 短篇
 **位置：** 写作（第 3/3 步）
 
-有参考小说想对标 → `/story-short-analyze`（存入 `拆文库/{书名}/`）；写完去 AI 味 → `/story-deslop`；想自检 → Phase 4 流程 + `references/short-prose-quality.md`；要市场方向 → `/story-short-scan`；设定太大适合长篇 → `/story-long-write`。
+有参考小说想对标 → `/story-short-analyze`（存入 `拆文库/{书名}/`）；写完去 AI 味 → `/story-deslop`；想自检 → Phase 4 流程；要市场方向 → `/story-short-scan`；设定太大适合长篇 → `/story-long-write`。
 
 ---
 
