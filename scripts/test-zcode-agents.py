@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 import subprocess
 import sys
 import tempfile
@@ -11,6 +12,42 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "scripts/generate-zcode-agents.py"
+CALLER_SKILLS = (
+    "story", "story-long-write", "story-short-write", "story-long-analyze",
+    "story-import", "story-deslop", "story-review",
+)
+
+
+def caller_contract_errors(root: Path) -> list[str]:
+    """Inspect entrypoints and every cold reference, not just generated roles."""
+    patterns = (
+        (r"\bAgent\s*\(\s*subagent_type\s*:", "Claude-only invocation"),
+        (r"canonical(?:\s+agent)?\s*目录\s*已部署|检查\s*canonical\s*目录", "file-only role availability"),
+    )
+    errors: list[str] = []
+    for skill in CALLER_SKILLS:
+        for path in sorted((root / "skills" / skill).rglob("*.md")):
+            for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                for pattern, label in patterns:
+                    if re.search(pattern, line):
+                        errors.append(f"{path.relative_to(root)}:{line_number}: {label}")
+    return errors
+
+
+def test_caller_contract_guard() -> None:
+    with tempfile.TemporaryDirectory(prefix="zcode-caller-") as raw:
+        root = Path(raw)
+        path = root / "skills/story-short-write/references/nested/workflow.md"
+        path.parent.mkdir(parents=True)
+        for invalid in (
+            '派 Agent(subagent_type: "consistency-checker", prompt: "核对")',
+            "当前运行时的 canonical 目录已部署 story-explorer 时才派出",
+            "按顶部兼容性检查 canonical 目录",
+        ):
+            path.write_text(invalid, encoding="utf-8")
+            assert len(caller_contract_errors(root)) == 1, invalid
+        path.write_text("按 SKILL 顶部的当前宿主角色来源检查，ZCode 查插件注册角色；Prompt：核对", encoding="utf-8")
+        assert not caller_contract_errors(root)
 
 
 def run(*args: str) -> subprocess.CompletedProcess[str]:
@@ -143,6 +180,9 @@ def main() -> int:
     test_permissions_and_adaptation()
     test_invalid_sources_fail_before_publish()
     test_check_detects_drift()
+    test_caller_contract_guard()
+    errors = caller_contract_errors(ROOT)
+    assert not errors, "\n".join(errors)
     print("PASS: ZCode agents preserve bounded capabilities and generate deterministically")
     return 0
 

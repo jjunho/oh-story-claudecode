@@ -12,7 +12,8 @@ ZCode 用户每次更新都得提醒 Agent 已支持子代理。仓库把旧版�
 
 - 依据 [ZCode 插件文档](https://zcode.z.ai/en/docs/plugin) 与 [子代理文档](https://zcode.z.ai/en/docs/subagents)，从 Claude 角色真源确定性生成七份插件角色，由 ZCode manifest 声明目录。保留工具白名单、禁用工具与轮数，模型继承当前会话，不照搬 Claude 模型别名或 inline hooks。
 - 七个会派角色的 skill（含 story 路由的查资料助手） 改为检查当前 ZCode 的注册角色与 Agent 工具；角色缺失、调用失败或递归限制才降级。setup 只维护项目 skills/commands/hooks/AGENTS，不创建未获官方文档支持的 `.zcode/agents`，不写用户 home。插件角色读取 workspace 的 `.zcode/skills` 资料，缺资料提示 setup。
-- 部署/使用/贡献文档与守卫同步当前能力；导入的 deep-analysis 与审查可选检索员也按注册状态分流，冷路径调用中的 `subagent_type` 标为 Claude 示例。版本不匹配时 ZCode 提示先更新插件，再刷新 workspace。
+- 部署/使用/贡献文档与守卫同步当前能力；导入的 deep-analysis 与审查可选检索员也按注册状态分流，所有调用侧冷路径只保留目标角色与 prompt，工具参数统一按顶部宿主映射；不再给未限定的 Claude 调用语法。版本不匹配时 ZCode 提示先更新插件，再刷新 workspace。
+- 合入前架构复核发现短篇构思/精修、导入验证/反推细纲仍有旧调用语法或仅查目录条件；调用侧守卫递归扫描七个入口及全部 Markdown references，回归先定位出九处旧调用/目录条件，再修正并通过正反例，避免只检查入口和生成物。
 - current-contract 的共享 spawn 预检也按“当前宿主角色来源”验证，覆盖插件注册而非只认项目文件；对应 fixture 先红后绿。
 - 生成器复用已有 Codex 的 frontmatter/工具解析与带回滚发布，发布 helper 只新增文件匹配参数（Codex 默认仍是 `*.toml`）。工具白名单、deny 优先、模型继承、无效输入零写入、退役文件清理与漂移均有回归。部署清单合并重复 Hook 校验，保持现有预算，不上调。
 
