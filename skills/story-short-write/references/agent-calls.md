@@ -1,6 +1,6 @@
 # agent-calls.md：短篇派写手的调用方式
 
-按 workflow-draft.md / workflow-revision.md 决定是否派 narrative-writer；派出时读本文件，主会话自行写作或去味时跳过。Antigravity 用 `invoke_subagent` + 同名 `TypeName`。
+派出 narrative-writer 时读。下文 `subagent_type` 是 Claude 示例；ZCode 用 `Agent` 按实际 schema 派发注册角色，Antigravity 用 `invoke_subagent` + 同名 `TypeName`，其余按 SKILL 顶部映射。
 
 ## 写正文
 

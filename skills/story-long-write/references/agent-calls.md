@@ -1,6 +1,6 @@
 # agent-calls.md：spawn 子代理的调用方式
 
-只在要 spawn 对应 agent 时读；主会话自己写正文、自己排纲时不读。调用时机见各流程；下列 prompt 列明必传内容。Antigravity 用 `invoke_subagent` + 同名 `TypeName`。
+派出 agent 时才读。下文 `subagent_type` 是 Claude 示例；ZCode 用 `Agent` 按实际 schema 派发注册角色，Antigravity 用 `invoke_subagent` + 同名 `TypeName`，其余按 SKILL 顶部映射。
 
 ## narrative-writer：写一章
 
