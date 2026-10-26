@@ -23,6 +23,7 @@ def caller_contract_errors(root: Path) -> list[str]:
     patterns = (
         (r"\bAgent\s*\(\s*subagent_type\s*:", "Claude-only invocation"),
         (r"canonical(?:\s+agent)?\s*目录\s*已部署|检查\s*canonical\s*目录", "file-only role availability"),
+        (r"只检查[^。；\n]{0,32}canonical\s*目录", "file-only version preflight"),
     )
     errors: list[str] = []
     for skill in CALLER_SKILLS:
@@ -43,6 +44,7 @@ def test_caller_contract_guard() -> None:
             '派 Agent(subagent_type: "consistency-checker", prompt: "核对")',
             "当前运行时的 canonical 目录已部署 story-explorer 时才派出",
             "按顶部兼容性检查 canonical 目录",
+            "但只检查当前运行时的 canonical 目录",
         ):
             path.write_text(invalid, encoding="utf-8")
             assert len(caller_contract_errors(root)) == 1, invalid
