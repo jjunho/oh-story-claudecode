@@ -33,7 +33,7 @@
 6. `.story-deployed` 的 `target_cli` 写入 `zcode` 或多端组合，`references_dir` 写 `.zcode/skills/story-setup/references/agent-references`。不创建 Claude 的 `.claude/.agents-pending-restart`。
 7. 检查当前插件注册角色并如实报告：可用时按同名角色派发；缺角色时提示启用/更新插件后新开会话，不用重复部署 workspace 代替。Hook 需要 PATH 中可用的 `node`。
 
-Plugin 安装不经过本算法：`.zcode-plugin/plugin.json` 暴露 Skills/Commands/Hooks 与七个角色。Plugin Skills 优先级低于 workspace `.zcode/skills`；升级插件后也要重新运行 `$story-setup` 更新项目快照与旧 AGENTS 受管块。**Hooks 只能注册一份**：插件在场时，以 manifest 为注册源；workspace 同批注册按第 4 步清理。
+Plugin 安装不经过本算法：`.zcode-plugin/plugin.json` 暴露 Skills/Commands/Hooks 与七个角色。Plugin Skills 优先级低于 workspace `.zcode/skills`；升级后须从**更新后的插件副本**运行 story-setup，覆盖旧项目快照与 AGENTS 受管块；旧 setup 遮蔽插件时按 [升级指南](../UPGRADING.md) 留备份移出再部署。**Hooks 只能注册一份**：插件在场时，以 manifest 为注册源；workspace 同批注册按第 4 步清理。
 
 ## 验证
 

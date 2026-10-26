@@ -14,7 +14,7 @@ compare 链接；小节名使用 Keep a Changelog 的六个英文类别（`Added
 
 ## [0.9.1] - 2026-10-26
 
-> 本版 `agents_version: 37`、`setup_skill_version: 1.3.5`。更新技能包后，在写作项目根重跑 `/story-setup`（Codex 用 `$story-setup`），再新开会话。ZCode 请先在 Plugin Management 更新并启用 `oh-story`；只安装独立 Skills 不会注册插件助手。书稿、设定、追踪和作者记忆无需迁移。
+> 本版 `agents_version: 37`、`setup_skill_version: 1.3.5`。更新技能包后，在写作项目根重跑 `/story-setup`（Codex 用 `$story-setup`），再新开会话。ZCode 请先在 Plugin Management 更新并启用 `oh-story`，再从新版插件运行 story-setup，避免项目旧快照遮蔽更新；只安装独立 Skills 不会注册插件助手。书稿、设定、追踪和作者记忆无需迁移。
 
 v0.9.1 修复 ZCode 专业助手的注册与调度、Windows 写作守卫的 Git 控制台闪窗，并扩大续写状态卡的活跃角色数量。
 

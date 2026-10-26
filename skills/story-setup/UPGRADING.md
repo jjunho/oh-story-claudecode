@@ -20,7 +20,8 @@
 ## 本次更新必须重跑 story-setup（v0.9.1，助手版本 37）
 
 - 更新技能包后重跑 story-setup，并新开会话，让新版助手与 hook 生效。
-- ZCode 用户须先更新并启用 `oh-story` 插件；独立安装的 Skills 不会注册插件角色。
+- ZCode 用户须先更新并启用 `oh-story` 插件，再从**更新后的插件副本**运行 story-setup，覆盖项目 `.zcode/skills` 快照；不要用项目里的旧 story-setup 重部署。独立安装的 Skills 不会注册插件角色。
+- ZCode 若仍命中项目旧快照，先把受管目录 `.zcode/skills/story-setup` 移出 `.zcode/skills` 留作备份，再从新版插件运行 story-setup；部署完成后该目录由新版重新生成。不必删除其他项目 Skills。
 - Windows 用户重跑后会刷新项目 hook，避免继续使用旧版入口。
 
 ## v0.9.0 升级说明（助手版本 36）
